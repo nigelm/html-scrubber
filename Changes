@@ -1,0 +1,12 @@
+Revision history for Perl extension HTML::Scrubber.
+
+0.02  Fri Apr 18 14:12:02 2003
+    - finished TODO, settled on API
+    - created a cpan worthy distribution and uploaded to CPAN
+
+0.01  Thu Apr 17 20:34:11 2003
+	- original version; created by h2xs 1.21 with options
+		-AX HTML::Scrubber
+    - wrote initial version and released at
+        http://perlmonks.org/index.pl?node_id=251427
+
