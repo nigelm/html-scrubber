@@ -5,3 +5,4 @@ MANIFEST.SKIP
 README
 Scrubber.pm
 test.pl
+META.yml                                Module meta-data (added by MakeMaker)

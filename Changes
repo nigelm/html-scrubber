@@ -1,5 +1,11 @@
 Revision history for Perl extension HTML::Scrubber.
 
+0.03  Mon Jul 21 07:32:10 2003
+    - perltidy ;)
+    - closed http://rt.cpan.org/NoAuth/Bug.html?id=2969
+      now escape spurious >< in text
+    - updated test.pl
+
 0.02  Fri Apr 18 14:12:02 2003
     - finished TODO, settled on API
     - created a cpan worthy distribution and uploaded to CPAN

@@ -36,7 +36,9 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing html
 
 =head1 DESCRIPTION
 
-If you wanna "scrubbing"/"sanitize" html input, this be the modulehtml
+If you wanna "scrub" or "sanitize" html input
+in a reliable an flexible fashion,
+then this module is for you.
 
 I wasn't satisfied with HTML::Sanitizer because it is
 based on HTML::TreeBuilder,
@@ -61,7 +63,7 @@ use HTML::Entities;
 use vars qw[ $VERSION $_scrub $_scrub_fh ];
 use strict;
 
-$VERSION = '0.02';
+$VERSION = '0.03';
 
 # my my my my, these here to prevent foolishness like 
 # http://perlmonks.org/index.pl?node_id=251127#Stealing+Lexicals
@@ -71,8 +73,11 @@ $_scrub_fh = [\&_scrub_fh, "self, event, tagname, attr, text"];
 sub new {
     my $package = shift;
     my $p = HTML::Parser->new(
-        api_version => 3,
-        default_h => $_scrub,
+        api_version     => 3,
+        default_h       => $_scrub,
+        marked_sections => 0,
+        strict_comment  => 0,
+        unbroken_text   => 1,
     );
 
     my $self = {
@@ -125,6 +130,8 @@ sub allow {
 
     $self->{_rules}{$_}=1 for @_;
 
+    return unless $self->{_optimize}; # till I figure it out (huh)
+
     if( $self->{_p}{'*'} ){       # default allow
         $self->{_p}->report_tags();   # so clear it
     } else {
@@ -143,6 +150,8 @@ sub deny {
     my $self = shift;
 
     $self->{_rules}{$_} = 0 for @_;
+
+    return unless $self->{_optimize}; # till I figure it out (huh)
 
     $self->{_p}->ignore_tags( # always ignore stuff we don't want
         grep {
@@ -287,29 +296,68 @@ sub _scrub_fh {
     my( $p, $e, $t, $a, $text ) = @_;
     my $s = $p->{"\0_s"} ;
 
-    if ( $e eq 'start' ) {
-        if( exists $s->{_rules}->{$t} ) {  # is there a specific rule
-            if( ref $s->{_rules}->{$t} ) { # is it complicated?(not simple;)
-                print {$s->{_out}} $s->_validate($t, $t, $a);
-            } elsif( $s->{_rules}->{$t} ) {
-        # validate using default attribute rule
-                print {$s->{_out}} $s->_validate($t, '_', $a);
+    if ( $e eq 'start' )
+    {
+        if( exists $s->{_rules}->{$t} )  # is there a specific rule
+        {
+            if( ref $s->{_rules}->{$t} ) # is it complicated?(not simple;)
+            { 
+                print
+                    {$s->{_out}}
+                        $s->_validate($t, $t, $a);
             }
-        } elsif( $s->{_rules}->{'*'} ) { # default allow tags
-            print {$s->{_out}} $s->_validate($t, '_', $a);
+            elsif( $s->{_rules}->{$t} ) # validate using default attribute rule
+            {
+                print
+                    {$s->{_out}}
+                        $s->_validate($t, '_', $a);
+            }
         }
-    } elsif ( $e eq 'end' ) {
-        if( exists $s->{_rules}->{$t} ) {
-            print {$s->{_out}} "</$t>" if $s->{_rules}->{$t};
-        } elsif( $s->{_rules}->{'*'} ) {
+        elsif( $s->{_rules}->{'*'} ) # default allow tags
+        {
+            print
+                {$s->{_out}}
+                    $s->_validate($t, '_', $a);
+        }
+    }
+    elsif ( $e eq 'end' )
+    {    
+        if( exists $s->{_rules}->{$t} )
+        {
+            print
+                {$s->{_out}}
+                    "</$t>"
+                        if $s->{_rules}->{$t};
+                        
+        }
+        elsif( $s->{_rules}->{'*'} )
+        {
+        
             print {$s->{_out}} "</$t>";
         }
-    } elsif ( $e eq 'comment' ) {
-        print {$s->{_out}} $text if $s->{_comment};
-    } elsif ( $e eq 'process' ) {
-        print {$s->{_out}} $text if $s->{_process};
-    } elsif ( $e eq 'text' or $e eq 'default') {
-        print {$s->{_out}} $text;
+    }
+    elsif ( $e eq 'comment' )
+    {
+        print
+            {$s->{_out}}
+                $text
+                    if $s->{_comment};
+    }
+    elsif ( $e eq 'process' )
+    {
+        print
+            {$s->{_out}}
+                $text
+                    if $s->{_process};
+    }
+    elsif ( $e eq 'text' or $e eq 'default')
+    {
+        $text =~ s/</&lt;/g; #https://rt.cpan.org/Ticket/Attachment/8716/10332/scrubber.patch
+        $text =~ s/>/&gt;/g;
+
+        print
+            {$s->{_out}}
+                $text;
     }
 }
 
@@ -322,30 +370,52 @@ sub _scrub {
     my( $p, $e, $t, $a, $text ) = @_;
     my $s = $p->{"\0_s"} ;
 
-    if ( $e eq 'start' ) {
-        if( exists $s->{_rules}->{$t} ) {  # is there a specific rule
-            if( ref $s->{_rules}->{$t} ) { # is it complicated?(not simple;)
+    if ( $e eq 'start' )
+    {
+        if( exists $s->{_rules}->{$t} )  # is there a specific rule
+        {  
+            if( ref $s->{_rules}->{$t} ) # is it complicated?(not simple;)
+            {
                 $s->{_r} .= $s->_validate($t, $t, $a);
-            } elsif( $s->{_rules}->{$t} ) {
-        # validate using default attribute rule
+            }
+            elsif( $s->{_rules}->{$t} )  # validate using default attribute rule
+            {
                 $s->{_r} .= $s->_validate($t, '_', $a);
             }
-        } elsif( $s->{_rules}->{'*'} ) { # default allow tags
+        }
+        elsif( $s->{_rules}->{'*'} )     # default allow tags
+        { 
             $s->{_r} .= $s->_validate($t, '_', $a);
         }
-    } elsif ( $e eq 'end' ) {
-        if( exists $s->{_rules}->{$t} ) {
+    }
+    elsif ( $e eq 'end' )
+    {
+        if( exists $s->{_rules}->{$t} )
+        {
             $s->{_r} .= "</$t>" if $s->{_rules}->{$t};
-        } elsif( $s->{_rules}->{'*'} ) {
+        }
+        elsif( $s->{_rules}->{'*'} )
+        {
             $s->{_r} .= "</$t>";
         }
-    } elsif ( $e eq 'comment' ) {
+    }
+    elsif ( $e eq 'comment' )
+    {
         $s->{_r} .= $text if $s->{_comment};
-    } elsif ( $e eq 'process' ) {
+    }
+    elsif ( $e eq 'process' )
+    {
         $s->{_r} .= $text if $s->{_process};
-    } elsif ( $e eq 'text' or $e eq 'default') {
+    }
+    elsif ( $e eq 'text' or $e eq 'default')
+    {
+        $text =~ s/</&lt;/g; #https://rt.cpan.org/Ticket/Attachment/8716/10332/scrubber.patch
+        $text =~ s/>/&gt;/g;
+
         $s->{_r} .= $text;
-    } elsif ( $e eq 'start_document' ) {
+    }
+    elsif ( $e eq 'start_document' )
+    {
         $s->{_r} = "";
     }
 }
@@ -353,6 +423,11 @@ sub _scrub {
 1;
 
 #print sprintf q[ '%-12s => %s,], "$_'", $h{$_} for sort keys %h;# perl!
+#perl -ne"chomp;print $_;print qq'\t\t# test ', ++$a if /ok\(/;print $/" test.pl >test2.pl
+#perl -ne"chomp;print $_;if( /ok\(/ ){s/\#test \d+$//;print qq'\t\t# test ', ++$a }print $/" test.pl >test2.pl
+#perl -ne"chomp;if(/ok\(/){s/# test .*$//;print$_,qq'\t\t# test ',++$a}else{print$_}print$/" test.pl >test2.pl
+
+=cut
 
 =head1 How does it work?
 
