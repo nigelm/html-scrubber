@@ -1,5 +1,9 @@
 Revision history for Perl extension HTML::Scrubber.
 
+0.08  Thu Apr  1 14:14:38 2004
+    - removed test which relied on stuff that changed in HTML-Parser-3.36
+      <https://rt.cpan.org/Ticket/Display.html?id=5472>
+
 0.07  Thu Mar 18 06:21:38 2004
     - allow for boolean attributes (thanks b10m)
     - which is why now attribute order is followed (attrseq)

@@ -62,7 +62,7 @@ use HTML::Entities;
 use vars qw[ $VERSION @_scrub @_scrub_fh ];
 use strict;
 
-$VERSION = '0.07';
+$VERSION = '0.08';
 
 # my my my my, these here to prevent foolishness like 
 # http://perlmonks.org/index.pl?node_id=251127#Stealing+Lexicals
