@@ -4,7 +4,7 @@ use strict;
 use Test::More tests => 9; 
 BEGIN { $^W = 1 }
 
-use_ok( 'HTML::Scrubber::StripScripts' );
+use_ok( 'HTML::Scrubber' );
 
 my $s = HTML::Scrubber->new;
 my $html = q[start <!--comment--> mid1 <?html pi> mid2 <?xml pi?> end];

@@ -1,10 +1,12 @@
 # perl Makefile.PL && nmake realclean && cls && perl Makefile.PL && nmake test
+# cpan-upload -mailto yo@yo.yo -verbose -user podmaster HTML-Scrubber-0.04.tar.gz
+
 
 use strict;
 use Test::More tests => 7; 
 BEGIN { $^W = 1 }
 
-use_ok( 'HTML::Scrubber::StripScripts' );
+use_ok( 'HTML::Scrubber' );
 
 my $s = HTML::Scrubber->new;
 my $html = q[<a href=1>link </a><br><B> bold </B><U> UNDERLINE </U>];

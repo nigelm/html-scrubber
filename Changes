@@ -1,5 +1,9 @@
 Revision history for Perl extension HTML::Scrubber.
 
+0.05  Thu Oct 30 23:27:37 2003
+    - fixed up various typos in tests ...
+    - bumped up version number ;(
+
 0.04  Wed Oct 29 18:35:08 2003
     - added missing lc in a few places (and got rid of for @_)
     - fixed (and improved) optimizations (stupid typo)
