@@ -59,21 +59,21 @@ If you're new to perl, good luck to you.
 package HTML::Scrubber;
 use HTML::Parser();
 use HTML::Entities;
-use vars qw[ $VERSION $_scrub $_scrub_fh ];
+use vars qw[ $VERSION @_scrub @_scrub_fh ];
 use strict;
 
-$VERSION = '0.05';
+$VERSION = '0.06';
 
 # my my my my, these here to prevent foolishness like 
 # http://perlmonks.org/index.pl?node_id=251127#Stealing+Lexicals
-$_scrub    = [\&_scrub, "self, event, tagname, attr, text"];
-$_scrub_fh = [\&_scrub_fh, "self, event, tagname, attr, text"];
+(@_scrub    )= ( \&_scrub, "self, event, tagname, attr, text");
+(@_scrub_fh )= ( \&_scrub_fh, "self, event, tagname, attr, text");
 
 sub new {
     my $package = shift;
     my $p = HTML::Parser->new(
         api_version     => 3,
-        default_h       => $_scrub,
+        default_h       => \@_scrub,
         marked_sections => 0,
         strict_comment  => 0,
         unbroken_text   => 1,
@@ -283,8 +283,10 @@ sub default {
 =cut
 
 sub scrub_file {
-    if(@_ == 3) {
+    if(@_ > 2){
         return unless defined $_[0]->_out($_[2]);
+    } else {
+        $_[0]->{_p}->handler( default => @_scrub );
     }
 
     $_[0]->_optimize() ;#if $_[0]->{_optimize};
@@ -292,6 +294,7 @@ sub scrub_file {
     $_[0]->{_p}->parse_file($_[1]);
 
     return delete $_[0]->{_r} unless exists $_[0]->{_out};
+    delete $_[0]->{_out};
     return 1;
 }
 
@@ -307,8 +310,10 @@ sub scrub_file {
 =cut
 
 sub scrub {
-    if(@_ == 3) {
+    if(@_ > 2){
         return unless defined $_[0]->_out($_[2]);
+    } else {
+        $_[0]->{_p}->handler( default => @_scrub );
     }
 
     $_[0]->_optimize();# if $_[0]->{_optimize};
@@ -317,13 +322,14 @@ sub scrub {
     $_[0]->{_p}->eof();
     
     return delete $_[0]->{_r} unless exists $_[0]->{_out};
+    delete $_[0]->{_out};
     return 1;
 }
 
 
 =for comment _out
-    $scrubber->out(*STDOUT) if fileno STDOUT;
-    $scrubber->out('foo.html') or die "eeek $!";
+    $scrubber->_out(*STDOUT) if fileno STDOUT;
+    $scrubber->_out('foo.html') or die "eeek $!";
 
 =cut
 
@@ -332,14 +338,14 @@ sub _out {
 
     unless( ref $o and ref \$o ne 'GLOB') {
         local *F;
-        open F, $o or return undef;
+        open F, ">$o" or return undef;
         binmode F;
         $self->{_out} = *F;
-        $self->{_p}->handler( default => $_scrub_fh );
     } else {
         $self->{_out} = $o;
-        $self->{_p}->handler( default => $_scrub );
     }
+
+    $self->{_p}->handler( default => @_scrub_fh );
 
     return 1;
 }
@@ -455,7 +461,7 @@ sub _scrub_fh {
     }
 }
 
-=for comment _scrub_fh
+=for comment _scrub
 I<default> handler, does the scrubbing if we're returning a giant string.
 
 =cut
@@ -526,7 +532,6 @@ sub _optimize {
 
     if( $self->{_rules}{'*'} ){       # default allow
         $self->{_p}->report_tags();   # so clear it
-#        warn "\nreporting all\n";
     } else {
 
         my(@reports) =
@@ -539,7 +544,6 @@ sub _optimize {
         $self->{_p}->report_tags( # default deny, so optimize
             @reports
         ) if @reports;
-#        warn "\nreporting only @reports\n";
     }
 
 # sub deny
@@ -547,6 +551,8 @@ sub _optimize {
     my(@ignores)= 
         grep {
             not $self->{_rules}{$_}
+        } grep {
+            $_ ne '*'
         } keys %{
             $self->{_rules}
         };
@@ -554,7 +560,6 @@ sub _optimize {
     $self->{_p}->ignore_tags( # always ignore stuff we don't want
         @ignores
     ) if @ignores;
-#    warn "\nignoring @ignores\n" if @ignores;
 
     $self->{_optimize}=0;
     return;

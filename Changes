@@ -1,5 +1,9 @@
 Revision history for Perl extension HTML::Scrubber.
 
+0.06  Sun Nov  2 01:26:42 2003
+    - fixed more typos
+    - added t\06_scrub_file.t (that part was broken, now fixed)
+
 0.05  Thu Oct 30 23:27:37 2003
     - fixed up various typos in tests ...
     - bumped up version number ;(
