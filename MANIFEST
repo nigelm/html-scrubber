@@ -1,8 +1,13 @@
 Changes
+LICENSE
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
 README
 Scrubber.pm
-test.pl
+t/01_use.t
+t/02_basic.t
+t/03_more.t
+t/04_style_script.t
+t/05_pi_comment.t
 META.yml                                Module meta-data (added by MakeMaker)

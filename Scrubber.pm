@@ -12,25 +12,24 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing html
     use strict;
                                                                             #
     my $html = q[
-        <HR>                                                                #
-        <B> bold                                                            #
-            <U> underlined                                                  #
-                <I>                                                         #
-                    <A href=#>  LINK    </A>                                #
-                </I>                                                        #
-            </U>                                                            #
-        </B>                                                                #
-        </HR>                                                               #
+    <style type="text/css"> BAD { background: #666; color: #666;} </style>
+    <script language="javascript"> alert("Hello, I am EVIL!");    </script>
+    <HR>
+        a   => <a href=1>link </a>
+        br  => <br>
+        b   => <B> bold </B>
+        u   => <U> UNDERLINE </U>
     ];
                                                                             #
-    my $scrubber = HTML::Scrubber->new( allow => [ qw[ p b i u hr br ] ] );
+    my $scrubber = HTML::Scrubber->new( allow => [ qw[ p b i u hr br ] ] ); #
                                                                             #
-    print $scrubber->scrub($html);
+    print $scrubber->scrub($html);                                          #
                                                                             #
-    $scrubber->deny( qw[ p b i u hr br ] );
+    $scrubber->deny( qw[ p b i u hr br ] );                                 #
                                                                             #
-    print $scrubber->scrub($html);
+    print $scrubber->scrub($html);                                          #
                                                                             #
+
 
 =for example end
 
@@ -63,7 +62,7 @@ use HTML::Entities;
 use vars qw[ $VERSION $_scrub $_scrub_fh ];
 use strict;
 
-$VERSION = '0.03';
+$VERSION = '0.04';
 
 # my my my my, these here to prevent foolishness like 
 # http://perlmonks.org/index.pl?node_id=251127#Stealing+Lexicals
@@ -78,6 +77,7 @@ sub new {
         marked_sections => 0,
         strict_comment  => 0,
         unbroken_text   => 1,
+        case_sensitive  => 0,
     );
 
     my $self = {
@@ -88,13 +88,16 @@ sub new {
         _comment => 0,
         _process => 0,
         _r => "",
+        _optimize => 1,
+        _script => 0,
+        _style  => 0,
     };
 
     $p->{"\0_s"} = bless $self, $package;
 
     return $self unless @_;
 
-    my %args = @_;
+    my(%args)= @_;
 
     for my $f( qw[ default allow deny rules process comment ] ) {
         next unless exists $args{$f};
@@ -108,6 +111,12 @@ sub new {
     return $self;
 }
 
+=head2 comment
+
+    warn "comments are  ", $p->comment ? 'allowed' : 'not allowed';
+    $p->comment(0);  # off by default
+
+=cut
 
 sub comment {
     return
@@ -117,6 +126,14 @@ sub comment {
     return;
 }
 
+=head2 process
+
+    warn "process instructions are  ", $p->process ? 'allowed' : 'not allowed';
+    $p->process(0);  # off by default
+
+=cut
+
+
 sub process {
     return
         $_[0]->{_process}
@@ -125,59 +142,132 @@ sub process {
     return;
 }
 
-sub allow {
-    my $self = shift;
 
-    $self->{_rules}{$_}=1 for @_;
+=head2 script
 
-    return unless $self->{_optimize}; # till I figure it out (huh)
+    warn "script tags (and everything in between) are supressed"
+        if $p->script;      # off by default
+    $p->script( 0 || 1 );
 
-    if( $self->{_p}{'*'} ){       # default allow
-        $self->{_p}->report_tags();   # so clear it
-    } else {
-        $self->{_p}->report_tags( # default deny, so optimize
-            grep {                # report only tags we want
-                $self->{_rules}{$_}
-            } keys %{
-                $self->{_rules}
-            }
-        );
-    }
+B<**> Please note that this is implemented 
+using HTML::Parser's ignore_elements function,
+so if C<script> is set to true,
+all script tags encountered will be validated like all other tags.
+
+=cut
+
+sub script {
+    return
+        $_[0]->{_script}
+            if @_ == 1;
+    $_[0]->{_script} = $_[1];
     return;
 }
+
+=head2 style 
+
+    warn "style tags (and everything in between) are supressed"
+        if $p->style;       # off by default
+    $p->style( 0 || 1 );
+
+B<**> Please note that this is implemented 
+using HTML::Parser's ignore_elements function,
+so if C<style> is set to true,
+all style tags encountered will be validated like all other tags.
+
+=cut
+
+sub style {
+    return
+        $_[0]->{_style}
+            if @_ == 1;
+    $_[0]->{_style} = $_[1];
+    return;
+}
+
+=head2 allow
+
+    $p->allow(qw[ t a g s ]);
+
+=cut
+
+sub allow {
+    my $self = shift;
+    for my $k(@_){
+        $self->{_rules}{lc $k}=1;
+    }
+    $self->{_optimize} = 1; # each time a rule changes, reoptimize when parse
+
+    return;
+}
+
+
+=head2 deny
+
+    $p->deny(qw[ t a g s ]);
+
+=cut
 
 sub deny {
     my $self = shift;
 
-    $self->{_rules}{$_} = 0 for @_;
+    for my $k(@_){
+        $self->{_rules}{lc $k} = 0;
+    }
 
-    return unless $self->{_optimize}; # till I figure it out (huh)
+    $self->{_optimize} = 1; # each time a rule changes, reoptimize when parse
 
-    $self->{_p}->ignore_tags( # always ignore stuff we don't want
-        grep {
-            not $self->{_rules}{$_}
-        } keys %{
-            $self->{_rules}
-        }
-    );
     return;
 }
+
+=head2 rules
+
+    $p->rules(
+        img => {
+            src => qr{^(?!http://)}i, # only relative image links allowed
+            alt => 1,                 # alt attribute allowed
+            '*' => 0,                 # deny all other attributes
+        },
+        b => 1,
+        ...
+    );
+
+=cut
 
 sub rules{
     my $self = shift;
-    my %rules = @_;
+    my(%rules)= @_;
     for my $k(keys %rules) {
-        $self->{_rules}{$k} = $rules{$k};
+        $self->{_rules}{lc $k} = $rules{$k};
     }
+
+    $self->{_optimize} = 1; # each time a rule changes, reoptimize when parse
+
     return;
 }
+
+=head2 default
+
+    print "default is ", $p->default();
+    $p->default(1);      # allow tags by default
+    $p->default(
+        undef,           # don't change
+        {                # default attribute rules
+            '*' => 1,    # allow attributes by default
+        }
+    );
+
+=cut
 
 sub default {
     return
         $_[0]->{_rules}{'*'}
             if @_ == 1;
+
     $_[0]->{_rules}{'*'} = $_[1] if defined $_[1];
-    $_[0]->{_rules}{'_'} = $_[2] if defined $_[2];
+    $_[0]->{_rules}{'_'} = $_[2] if defined $_[2] and ref $_[2];
+    $_[0]->{_optimize} = 1; # each time a rule changes, reoptimize when parse
+
     return;
 }
 
@@ -196,6 +286,8 @@ sub scrub_file {
     if(@_ == 3) {
         return unless defined $_[0]->_out($_[2]);
     }
+
+    $_[0]->_optimize() ;#if $_[0]->{_optimize};
 
     $_[0]->{_p}->parse_file($_[1]);
 
@@ -218,6 +310,8 @@ sub scrub {
     if(@_ == 3) {
         return unless defined $_[0]->_out($_[2]);
     }
+
+    $_[0]->_optimize();# if $_[0]->{_optimize};
 
     $_[0]->{_p}->parse($_[1]);
     $_[0]->{_p}->eof();
@@ -275,7 +369,7 @@ sub _validate {
             $f{$k} = $a->{$k};
         }
     }
-    
+
     return "<$t $r>"
         if $r = join ' ',
                 map {
@@ -420,14 +514,62 @@ sub _scrub {
     }
 }
 
+sub _optimize {
+    my($self) = @_;
+
+    my( @ignore_elements ) = grep { not $self->{"_$_"} } qw(script style);
+    $self->{_p}->ignore_elements(@ignore_elements); # if @ is empty, we reset ;)
+
+    return unless $self->{_optimize};
+#sub allow
+#    return unless $self->{_optimize}; # till I figure it out (huh)
+
+    if( $self->{_rules}{'*'} ){       # default allow
+        $self->{_p}->report_tags();   # so clear it
+#        warn "\nreporting all\n";
+    } else {
+
+        my(@reports) =
+            grep {                # report only tags we want
+                $self->{_rules}{$_}
+            } keys %{
+                $self->{_rules}
+            };
+
+        $self->{_p}->report_tags( # default deny, so optimize
+            @reports
+        ) if @reports;
+#        warn "\nreporting only @reports\n";
+    }
+
+# sub deny
+#    return unless $self->{_optimize}; # till I figure it out (huh)
+    my(@ignores)= 
+        grep {
+            not $self->{_rules}{$_}
+        } keys %{
+            $self->{_rules}
+        };
+
+    $self->{_p}->ignore_tags( # always ignore stuff we don't want
+        @ignores
+    ) if @ignores;
+#    warn "\nignoring @ignores\n" if @ignores;
+
+    $self->{_optimize}=0;
+    return;
+}
+
+
+sub DESTROY {
+    delete $_[0]->{_p}->{"\0_s"}; # break circular reference
+}
 1;
 
 #print sprintf q[ '%-12s => %s,], "$_'", $h{$_} for sort keys %h;# perl!
 #perl -ne"chomp;print $_;print qq'\t\t# test ', ++$a if /ok\(/;print $/" test.pl >test2.pl
 #perl -ne"chomp;print $_;if( /ok\(/ ){s/\#test \d+$//;print qq'\t\t# test ', ++$a }print $/" test.pl >test2.pl
 #perl -ne"chomp;if(/ok\(/){s/# test .*$//;print$_,qq'\t\t# test ',++$a}else{print$_}print$/" test.pl >test2.pl
-
-=cut
 
 =head1 How does it work?
 
@@ -603,7 +745,6 @@ All rights reserved.
 This module is free software;
 you can redistribute it and/or modify it under
 the same terms as Perl itself.
-If you don't know what this means,
-visit http://perl.com/ or http://cpan.org/.
+The LICENSE file contains the full text of the license.
 
 =cut

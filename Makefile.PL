@@ -4,8 +4,11 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     'NAME'		=> 'HTML::Scrubber',
     'VERSION_FROM'	=> 'Scrubber.pm', # finds $VERSION
+    'PREREQ_FATAL'  => 1,
     'PREREQ_PM'		=> {
         'HTML::Parser' => 3,
+        'Test'         => 0,
+        'Test::More'   => 0,
     }, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM => 'Scrubber.pm', # retrieve abstract from module

@@ -84,7 +84,10 @@ ok( $scrubber->default() );				# test 33
 ok( ! $scrubber->comment() );				# test 34
 ok( ! $scrubber->process() );				# test 35
 
+#use Data::Dumper;die Dumper( [ $scrubber, $scrubber->scrub($html) ]);
+
 $scrubber = $scrubber->scrub($html);
+
 
 ok( $scrubber );				# test 36
 ok( $scrubber =~ /[><]/ );				# test 37

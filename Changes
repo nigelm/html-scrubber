@@ -1,5 +1,14 @@
 Revision history for Perl extension HTML::Scrubber.
 
+0.04  Wed Oct 29 18:35:08 2003
+    - added missing lc in a few places (and got rid of for @_)
+    - fixed (and improved) optimizations (stupid typo)
+    - added DESTROY to break circular reference (I lost my TODO, so i forgot)
+    - added more pod (allow deny ...)
+    - improved test suite
+    - added LICENSE file
+    - added script/style functions (nice)
+
 0.03  Mon Jul 21 07:32:10 2003
     - perltidy ;)
     - closed http://rt.cpan.org/NoAuth/Bug.html?id=2969
