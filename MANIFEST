@@ -11,4 +11,5 @@ t/03_more.t
 t/04_style_script.t
 t/05_pi_comment.t
 t/06_scrub_file.t
+t/07_booleans.t
 META.yml                                Module meta-data (added by MakeMaker)

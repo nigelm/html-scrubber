@@ -62,12 +62,12 @@ use HTML::Entities;
 use vars qw[ $VERSION @_scrub @_scrub_fh ];
 use strict;
 
-$VERSION = '0.06';
+$VERSION = '0.07';
 
 # my my my my, these here to prevent foolishness like 
 # http://perlmonks.org/index.pl?node_id=251127#Stealing+Lexicals
-(@_scrub    )= ( \&_scrub, "self, event, tagname, attr, text");
-(@_scrub_fh )= ( \&_scrub_fh, "self, event, tagname, attr, text");
+(@_scrub    )= ( \&_scrub, "self, event, tagname, attr, attrseq, text");
+(@_scrub_fh )= ( \&_scrub_fh, "self, event, tagname, attr, attrseq, text");
 
 sub new {
     my $package = shift;
@@ -78,6 +78,7 @@ sub new {
         strict_comment  => 0,
         unbroken_text   => 1,
         case_sensitive  => 0,
+        boolean_attribute_value => undef,
     );
 
     my $self = {
@@ -358,7 +359,7 @@ Takes tag, rule('_' || $tag), attrref.
 =cut
 
 sub _validate {
-    my($s, $t, $r, $a) = @_;
+    my($s, $t, $r, $a, $as) = @_;
     return "<$t>" unless %$a;
 
     $r = $s->{_rules}->{$r};
@@ -376,13 +377,18 @@ sub _validate {
         }
     }
 
-    return "<$t $r>"
-        if $r = join ' ',
-                map {
-                    qq[$_="]
-                    .encode_entities($f{$_})
-                    .q["]
-                } keys %f;
+    if( %f ){
+        my %seen;
+        return "<$t $r>"
+            if $r = join ' ',
+                    map {
+                        defined $f{$_}
+                        ? qq[$_="].encode_entities($f{$_}).q["]
+                        : $_; # boolean attribute (TODO?)
+                    } grep {
+                        exists $f{$_} and !$seen{$_}++;
+                    } @$as;
+    }
 
     return "<$t>";
 }
@@ -393,7 +399,7 @@ I<default> handler, does the scrubbing if we're scrubbing out to a file.
 =cut
 
 sub _scrub_fh {
-    my( $p, $e, $t, $a, $text ) = @_;
+    my( $p, $e, $t, $a, $as, $text ) = @_;
     my $s = $p->{"\0_s"} ;
 
     if ( $e eq 'start' )
@@ -404,20 +410,20 @@ sub _scrub_fh {
             { 
                 print
                     {$s->{_out}}
-                        $s->_validate($t, $t, $a);
+                        $s->_validate($t, $t, $a, $as);
             }
             elsif( $s->{_rules}->{$t} ) # validate using default attribute rule
             {
                 print
                     {$s->{_out}}
-                        $s->_validate($t, '_', $a);
+                        $s->_validate($t, '_', $a, $as);
             }
         }
         elsif( $s->{_rules}->{'*'} ) # default allow tags
         {
             print
                 {$s->{_out}}
-                    $s->_validate($t, '_', $a);
+                    $s->_validate($t, '_', $a, $as);
         }
     }
     elsif ( $e eq 'end' )
@@ -467,7 +473,7 @@ I<default> handler, does the scrubbing if we're returning a giant string.
 =cut
 
 sub _scrub {
-    my( $p, $e, $t, $a, $text ) = @_;
+    my( $p, $e, $t, $a, $as, $text ) = @_;
     my $s = $p->{"\0_s"} ;
 
     if ( $e eq 'start' )
@@ -476,16 +482,16 @@ sub _scrub {
         {  
             if( ref $s->{_rules}->{$t} ) # is it complicated?(not simple;)
             {
-                $s->{_r} .= $s->_validate($t, $t, $a);
+                $s->{_r} .= $s->_validate($t, $t, $a, $as);
             }
             elsif( $s->{_rules}->{$t} )  # validate using default attribute rule
             {
-                $s->{_r} .= $s->_validate($t, '_', $a);
+                $s->{_r} .= $s->_validate($t, '_', $a, $as);
             }
         }
         elsif( $s->{_rules}->{'*'} )     # default allow tags
         { 
-            $s->{_r} .= $s->_validate($t, '_', $a);
+            $s->{_r} .= $s->_validate($t, '_', $a, $as);
         }
     }
     elsif ( $e eq 'end' )
@@ -731,21 +737,20 @@ If you have Test::Inline (and you've installed HTML::Scrubber), try
 
 L<HTML::Parser>, L<Test::Inline>, L<HTML::Sanitizer>.
 
+=head1 BUGS/SUGGESTIONS/ETC
+
+Please use
+https://rt.cpan.org/NoAuth/Bugs.html?Dist=HTML-Scrubber
+to report I<bugs>/additions/etc
+or send mail to <bug-HTML-Scrubber#rt.cpan.org>.
+
 =head1 AUTHOR
 
-D.H aka PodMaster
-
-
-Please use http://rt.cpan.org/ to report bugs.
-
-Just go to
-http://rt.cpan.org/NoAuth/Bugs.html?Dist=HTML-Scrubber
-to see a bug list and/or repot new ones.
+D. H. (PodMaster)
 
 =head1 LICENSE
 
-Copyright (c) 2003 by D.H. aka PodMaster.
-All rights reserved.
+Copyright (c) 2003-2004 by D.H. (PodMaster). All rights reserved.
 
 This module is free software;
 you can redistribute it and/or modify it under

@@ -14,3 +14,9 @@ WriteMakefile(
       (ABSTRACT_FROM => 'Scrubber.pm', # retrieve abstract from module
        AUTHOR     => 'D. H. aka PodMaster') : ()),
 );
+
+__END__
+perl Makefile.PL && nmake realclean && cls && perl Makefile.PL && nmake disttest
+nmake dist TAR=ptar
+chmod 7777 *.gz
+perl -le" `cpan-upload $_` for( (sort glob q,*.gz,)[-1]) "
