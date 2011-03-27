@@ -14,7 +14,7 @@ $scrubber->allow( @allow );
 $scrubber->default(
     undef,              # don't change
     {                   # default attribute rules
-        '/' => 1,       # '/' ia boolean (stand-alone) attribute 
+        '/' => 1,       # '/' ia boolean (stand-alone) attribute
         'pie' => 1,
         'selected' => 1,
         'disabled' => 1,

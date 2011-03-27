@@ -63,7 +63,7 @@ use vars qw[ $VERSION @_scrub @_scrub_fh ];
 
 $VERSION = '0.08';
 
-# my my my my, these here to prevent foolishness like 
+# my my my my, these here to prevent foolishness like
 # http://perlmonks.org/index.pl?node_id=251127#Stealing+Lexicals
 (@_scrub    )= ( \&_scrub, "self, event, tagname, attr, attrseq, text");
 (@_scrub_fh )= ( \&_scrub_fh, "self, event, tagname, attr, attrseq, text");
@@ -149,7 +149,7 @@ sub process {
         if $p->script;      # off by default
     $p->script( 0 || 1 );
 
-B<**> Please note that this is implemented 
+B<**> Please note that this is implemented
 using HTML::Parser's ignore_elements function,
 so if C<script> is set to true,
 all script tags encountered will be validated like all other tags.
@@ -164,13 +164,13 @@ sub script {
     return;
 }
 
-=head2 style 
+=head2 style
 
     warn "style tags (and everything in between) are supressed"
         if $p->style;       # off by default
     $p->style( 0 || 1 );
 
-B<**> Please note that this is implemented 
+B<**> Please note that this is implemented
 using HTML::Parser's ignore_elements function,
 so if C<style> is set to true,
 all style tags encountered will be validated like all other tags.
@@ -320,7 +320,7 @@ sub scrub {
 
     $_[0]->{_p}->parse($_[1]);
     $_[0]->{_p}->eof();
-    
+
     return delete $_[0]->{_r} unless exists $_[0]->{_out};
     delete $_[0]->{_out};
     return 1;
@@ -406,7 +406,7 @@ sub _scrub_fh {
         if( exists $s->{_rules}->{$t} )  # is there a specific rule
         {
             if( ref $s->{_rules}->{$t} ) # is it complicated?(not simple;)
-            { 
+            {
                 print
                     {$s->{_out}}
                         $s->_validate($t, $t, $a, $as);
@@ -426,18 +426,18 @@ sub _scrub_fh {
         }
     }
     elsif ( $e eq 'end' )
-    {    
+    {
         if( exists $s->{_rules}->{$t} )
         {
             print
                 {$s->{_out}}
                     "</$t>"
                         if $s->{_rules}->{$t};
-                        
+
         }
         elsif( $s->{_rules}->{'*'} )
         {
-        
+
             print {$s->{_out}} "</$t>";
         }
     }
@@ -478,7 +478,7 @@ sub _scrub {
     if ( $e eq 'start' )
     {
         if( exists $s->{_rules}->{$t} )  # is there a specific rule
-        {  
+        {
             if( ref $s->{_rules}->{$t} ) # is it complicated?(not simple;)
             {
                 $s->{_r} .= $s->_validate($t, $t, $a, $as);
@@ -489,7 +489,7 @@ sub _scrub {
             }
         }
         elsif( $s->{_rules}->{'*'} )     # default allow tags
-        { 
+        {
             $s->{_r} .= $s->_validate($t, '_', $a, $as);
         }
     }
@@ -553,7 +553,7 @@ sub _optimize {
 
 # sub deny
 #    return unless $self->{_optimize}; # till I figure it out (huh)
-    my(@ignores)= 
+    my(@ignores)=
         grep {
             not $self->{_rules}{$_}
         } grep {
@@ -671,10 +671,10 @@ the default attribute rule is applied.
         <A NAME="evil">
             <A HREF="javascript:alert('die die die');">HREF=JAVA &lt;!&gt;</A>
             <br>
-            <A HREF="image/bigone.jpg" ONMOUSEOVER="alert('die die die');"> 
+            <A HREF="image/bigone.jpg" ONMOUSEOVER="alert('die die die');">
                 <IMG SRC="image/smallone.jpg" ALT="ONMOUSEOVER JAVASCRIPT">
             </A>
-        </A> <br> 
+        </A> <br>
     ];
                                                                             #
     print "#original text",$/, $it, $/;

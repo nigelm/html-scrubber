@@ -72,18 +72,18 @@ If you're new to perl, good luck to you.
         if $p->script;      # off by default
     $p->script( 0 || 1 );
 
-B<**> Please note that this is implemented 
+B<**> Please note that this is implemented
 using HTML::Parser's ignore_elements function,
 so if C<script> is set to true,
 all script tags encountered will be validated like all other tags.
 
-=head2 style 
+=head2 style
 
     warn "style tags (and everything in between) are supressed"
         if $p->style;       # off by default
     $p->style( 0 || 1 );
 
-B<**> Please note that this is implemented 
+B<**> Please note that this is implemented
 using HTML::Parser's ignore_elements function,
 so if C<style> is set to true,
 all style tags encountered will be validated like all other tags.
@@ -240,10 +240,10 @@ the default attribute rule is applied.
         <A NAME="evil">
             <A HREF="javascript:alert('die die die');">HREF=JAVA &lt;!&gt;</A>
             <br>
-            <A HREF="image/bigone.jpg" ONMOUSEOVER="alert('die die die');"> 
+            <A HREF="image/bigone.jpg" ONMOUSEOVER="alert('die die die');">
                 <IMG SRC="image/smallone.jpg" ALT="ONMOUSEOVER JAVASCRIPT">
             </A>
-        </A> <br> 
+        </A> <br>
     ];
                                                                             #
     print "#original text",$/, $it, $/;

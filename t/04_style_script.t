@@ -1,7 +1,7 @@
 # perl Makefile.PL && nmake realclean && cls && perl Makefile.PL && nmake test
 
 use strict;
-use Test::More tests => 9; 
+use Test::More tests => 9;
 BEGIN { $^W = 1 }
 
 use_ok( 'HTML::Scrubber' );

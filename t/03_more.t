@@ -3,7 +3,7 @@
 
 
 use strict;
-use Test::More tests => 7; 
+use Test::More tests => 7;
 BEGIN { $^W = 1 }
 
 use_ok( 'HTML::Scrubber' );
