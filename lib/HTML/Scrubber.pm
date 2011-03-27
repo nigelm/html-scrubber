@@ -1,7 +1,6 @@
+package HTML::Scrubber;
 
-=head1 NAME
-
-HTML::Scrubber - Perl extension for scrubbing/sanitizing html
+# ABSTRACT: Perl extension for scrubbing/sanitizing html
 
 =head1 SYNOPSIS
 
@@ -56,11 +55,11 @@ If you're new to perl, good luck to you.
 
 =cut
 
-package HTML::Scrubber;
+use strict;
+use warnings;
 use HTML::Parser();
 use HTML::Entities;
 use vars qw[ $VERSION @_scrub @_scrub_fh ];
-use strict;
 
 $VERSION = '0.08';
 
@@ -736,25 +735,5 @@ If you have Test::Inline (and you've installed HTML::Scrubber), try
 =head1 SEE ALSO
 
 L<HTML::Parser>, L<Test::Inline>, L<HTML::Sanitizer>.
-
-=head1 BUGS/SUGGESTIONS/ETC
-
-Please use
-https://rt.cpan.org/NoAuth/Bugs.html?Dist=HTML-Scrubber
-to report I<bugs>/additions/etc
-or send mail to <bug-HTML-Scrubber#rt.cpan.org>.
-
-=head1 AUTHOR
-
-D. H. (PodMaster)
-
-=head1 LICENSE
-
-Copyright (c) 2003-2004 by D.H. (PodMaster). All rights reserved.
-
-This module is free software;
-you can redistribute it and/or modify it under
-the same terms as Perl itself.
-The LICENSE file contains the full text of the license.
 
 =cut

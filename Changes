@@ -1,5 +1,8 @@
 Revision history for Perl extension HTML::Scrubber.
 
+{{$NEXT}}
+    - Basic conversion to Dist::Zilla/git
+
 0.08  Thu Apr  1 14:14:38 2004
     - removed test which relied on stuff that changed in HTML-Parser-3.36
       <https://rt.cpan.org/Ticket/Display.html?id=5472>
@@ -37,8 +40,7 @@ Revision history for Perl extension HTML::Scrubber.
     - created a cpan worthy distribution and uploaded to CPAN
 
 0.01  Thu Apr 17 20:34:11 2003
-	- original version; created by h2xs 1.21 with options
-		-AX HTML::Scrubber
+  - original version; created by h2xs 1.21 with options
+    -AX HTML::Scrubber
     - wrote initial version and released at
         http://perlmonks.org/index.pl?node_id=251427
-
