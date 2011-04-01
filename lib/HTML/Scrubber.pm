@@ -391,137 +391,86 @@ sub _validate {
     return "<$t>";
 }
 
+=for comment _scrub_str
+
+I<default> handler, used by both _scrub and _scrub_fh
+Moved all the common code (ie all of it) into a single routine for
+ease of maintenance
+
+=cut
+
+sub _scrub_str {
+    my ( $p, $e, $t, $a, $as, $text ) = @_;
+
+    my $s      = $p->{"\0_s"};
+    my $outstr = '';
+
+    if ( $e eq 'start' ) {
+        if ( exists $s->{_rules}->{$t} )    # is there a specific rule
+        {
+            if ( ref $s->{_rules}->{$t} )    # is it complicated?(not simple;)
+            {
+                $outstr .= $s->_validate( $t, $t, $a, $as );
+            }
+            elsif ( $s->{_rules}->{$t} )     # validate using default attribute rule
+            {
+                $outstr .= $s->_validate( $t, '_', $a, $as );
+            }
+        }
+        elsif ( $s->{_rules}->{'*'} )        # default allow tags
+        {
+            $outstr .= $s->_validate( $t, '_', $a, $as );
+        }
+    }
+    elsif ( $e eq 'end' ) {
+        if ( exists $s->{_rules}->{$t} ) {
+            $outstr .= "</$t>" if $s->{_rules}->{$t};
+        }
+        elsif ( $s->{_rules}->{'*'} ) {
+            $outstr .= "</$t>";
+        }
+    }
+    elsif ( $e eq 'comment' ) {
+        $outstr .= $text if $s->{_comment};
+    }
+    elsif ( $e eq 'process' ) {
+        $outstr .= $text if $s->{_process};
+    }
+    elsif ( $e eq 'text' or $e eq 'default' ) {
+        $text =~ s/</&lt;/g;    #https://rt.cpan.org/Ticket/Attachment/8716/10332/scrubber.patch
+        $text =~ s/>/&gt;/g;
+
+        $outstr .= $text;
+    }
+    elsif ( $e eq 'start_document' ) {
+        $outstr = "";
+    }
+
+    return $outstr;
+}
+
 =for comment _scrub_fh
+
 I<default> handler, does the scrubbing if we're scrubbing out to a file.
+Now calls _scrub_str and pushes that out to a file.
 
 =cut
 
 sub _scrub_fh {
-    my( $p, $e, $t, $a, $as, $text ) = @_;
-    my $s = $p->{"\0_s"} ;
 
-    if ( $e eq 'start' )
-    {
-        if( exists $s->{_rules}->{$t} )  # is there a specific rule
-        {
-            if( ref $s->{_rules}->{$t} ) # is it complicated?(not simple;)
-            {
-                print
-                    {$s->{_out}}
-                        $s->_validate($t, $t, $a, $as);
-            }
-            elsif( $s->{_rules}->{$t} ) # validate using default attribute rule
-            {
-                print
-                    {$s->{_out}}
-                        $s->_validate($t, '_', $a, $as);
-            }
-        }
-        elsif( $s->{_rules}->{'*'} ) # default allow tags
-        {
-            print
-                {$s->{_out}}
-                    $s->_validate($t, '_', $a, $as);
-        }
-    }
-    elsif ( $e eq 'end' )
-    {
-        if( exists $s->{_rules}->{$t} )
-        {
-            print
-                {$s->{_out}}
-                    "</$t>"
-                        if $s->{_rules}->{$t};
-
-        }
-        elsif( $s->{_rules}->{'*'} )
-        {
-
-            print {$s->{_out}} "</$t>";
-        }
-    }
-    elsif ( $e eq 'comment' )
-    {
-        print
-            {$s->{_out}}
-                $text
-                    if $s->{_comment};
-    }
-    elsif ( $e eq 'process' )
-    {
-        print
-            {$s->{_out}}
-                $text
-                    if $s->{_process};
-    }
-    elsif ( $e eq 'text' or $e eq 'default')
-    {
-        $text =~ s/</&lt;/g; #https://rt.cpan.org/Ticket/Attachment/8716/10332/scrubber.patch
-        $text =~ s/>/&gt;/g;
-
-        print
-            {$s->{_out}}
-                $text;
-    }
+    print { $_[0]->{"\0_s"}->{_out} } _scrub_str(@_);
 }
 
 =for comment _scrub
+
 I<default> handler, does the scrubbing if we're returning a giant string.
+Now calls _scrub_str and appends that to the output string.
 
 =cut
 
 sub _scrub {
-    my( $p, $e, $t, $a, $as, $text ) = @_;
-    my $s = $p->{"\0_s"} ;
 
-    if ( $e eq 'start' )
-    {
-        if( exists $s->{_rules}->{$t} )  # is there a specific rule
-        {
-            if( ref $s->{_rules}->{$t} ) # is it complicated?(not simple;)
-            {
-                $s->{_r} .= $s->_validate($t, $t, $a, $as);
-            }
-            elsif( $s->{_rules}->{$t} )  # validate using default attribute rule
-            {
-                $s->{_r} .= $s->_validate($t, '_', $a, $as);
-            }
-        }
-        elsif( $s->{_rules}->{'*'} )     # default allow tags
-        {
-            $s->{_r} .= $s->_validate($t, '_', $a, $as);
-        }
-    }
-    elsif ( $e eq 'end' )
-    {
-        if( exists $s->{_rules}->{$t} )
-        {
-            $s->{_r} .= "</$t>" if $s->{_rules}->{$t};
-        }
-        elsif( $s->{_rules}->{'*'} )
-        {
-            $s->{_r} .= "</$t>";
-        }
-    }
-    elsif ( $e eq 'comment' )
-    {
-        $s->{_r} .= $text if $s->{_comment};
-    }
-    elsif ( $e eq 'process' )
-    {
-        $s->{_r} .= $text if $s->{_process};
-    }
-    elsif ( $e eq 'text' or $e eq 'default')
-    {
-        $text =~ s/</&lt;/g; #https://rt.cpan.org/Ticket/Attachment/8716/10332/scrubber.patch
-        $text =~ s/>/&gt;/g;
-
-        $s->{_r} .= $text;
-    }
-    elsif ( $e eq 'start_document' )
-    {
-        $s->{_r} = "";
-    }
+    $_[0]->{"\0_s"}->{_r} .= _scrub_str(@_);
 }
 
 sub _optimize {
