@@ -4,14 +4,21 @@ package HTML::Scrubber;
 ## use critic
 # ABSTRACT: Perl extension for scrubbing/sanitizing html
 
+=begin :prelude
+
+=for stopwords html
+
+=end :prelude
+
 =head1 SYNOPSIS
 
-=for example begin
-
-    #!/usr/bin/perl -w
     use HTML::Scrubber;
-    use strict;
-                                                                            #
+
+    my $scrubber = HTML::Scrubber->new( allow => [ qw[ p b i u hr br ] ] );
+    print $scrubber->scrub('<p><b>bold</b> <em>missing</em></p>');
+    # output is: <p><b>bold</b> </p>
+
+    # more complex input
     my $html = q[
     <style type="text/css"> BAD { background: #666; color: #666;} </style>
     <script language="javascript"> alert("Hello, I am EVIL!");    </script>
@@ -21,29 +28,22 @@ package HTML::Scrubber;
         b   => <B> bold </B>
         u   => <U> UNDERLINE </U>
     ];
-                                                                            #
-    my $scrubber = HTML::Scrubber->new( allow => [ qw[ p b i u hr br ] ] ); #
-                                                                            #
-    print $scrubber->scrub($html);                                          #
-                                                                            #
-    $scrubber->deny( qw[ p b i u hr br ] );                                 #
-                                                                            #
-    print $scrubber->scrub($html);                                          #
-                                                                            #
 
+    print $scrubber->scrub($html);
 
-=for example end
+    $scrubber->deny( qw[ p b i u hr br ] );
+
+    print $scrubber->scrub($html);
+
 
 =head1 DESCRIPTION
 
-If you wanna "scrub" or "sanitize" html input
-in a reliable an flexible fashion,
-then this module is for you.
+If you wanna "scrub" or "sanitize" html input in a reliable and
+flexible fashion, then this module is for you.
 
-I wasn't satisfied with HTML::Sanitizer because it is
-based on HTML::TreeBuilder,
-so I thought I'd write something similar
-that works directly with HTML::Parser.
+I wasn't satisfied with HTML::Sanitizer because it is based on
+HTML::TreeBuilder, so I thought I'd write something similar that
+works directly with HTML::Parser.
 
 =head1 METHODS
 
