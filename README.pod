@@ -140,11 +140,21 @@ all style tags encountered will be validated like all other tags.
 Uses $self->{_rules} to do attribute validation.
 Takes tag, rule('_' || $tag), attrref.
 
+=for comment _scrub_str
+
+I<default> handler, used by both _scrub and _scrub_fh
+Moved all the common code (ie all of it) into a single routine for
+ease of maintenance
+
 =for comment _scrub_fh
+
 I<default> handler, does the scrubbing if we're scrubbing out to a file.
+Now calls _scrub_str and pushes that out to a file.
 
 =for comment _scrub
+
 I<default> handler, does the scrubbing if we're returning a giant string.
+Now calls _scrub_str and appends that to the output string.
 
 =head1 How does it work?
 
