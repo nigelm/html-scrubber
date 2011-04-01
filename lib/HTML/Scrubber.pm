@@ -1,5 +1,7 @@
+## no critic
 package HTML::Scrubber;
 
+## use critic
 # ABSTRACT: Perl extension for scrubbing/sanitizing html
 
 =head1 SYNOPSIS
@@ -59,9 +61,7 @@ use strict;
 use warnings;
 use HTML::Parser();
 use HTML::Entities;
-use vars qw[ $VERSION @_scrub @_scrub_fh ];
-
-$VERSION = '0.08';
+use vars qw[ @_scrub @_scrub_fh ];
 
 # my my my my, these here to prevent foolishness like
 # http://perlmonks.org/index.pl?node_id=251127#Stealing+Lexicals
