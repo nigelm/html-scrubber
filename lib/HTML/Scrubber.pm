@@ -1,61 +1,15 @@
 ## no critic
 package HTML::Scrubber;
+BEGIN {
+  $HTML::Scrubber::VERSION = '0.09';
+}
+BEGIN {
+  $HTML::Scrubber::AUTHORITY = 'cpan:NIGELM';
+}
 
 ## use critic
 # ABSTRACT: Perl extension for scrubbing/sanitizing html
 
-=begin :prelude
-
-=for stopwords html
-
-=end :prelude
-
-=head1 SYNOPSIS
-
-    use HTML::Scrubber;
-
-    my $scrubber = HTML::Scrubber->new( allow => [ qw[ p b i u hr br ] ] );
-    print $scrubber->scrub('<p><b>bold</b> <em>missing</em></p>');
-    # output is: <p><b>bold</b> </p>
-
-    # more complex input
-    my $html = q[
-    <style type="text/css"> BAD { background: #666; color: #666;} </style>
-    <script language="javascript"> alert("Hello, I am EVIL!");    </script>
-    <HR>
-        a   => <a href=1>link </a>
-        br  => <br>
-        b   => <B> bold </B>
-        u   => <U> UNDERLINE </U>
-    ];
-
-    print $scrubber->scrub($html);
-
-    $scrubber->deny( qw[ p b i u hr br ] );
-
-    print $scrubber->scrub($html);
-
-
-=head1 DESCRIPTION
-
-If you wanna "scrub" or "sanitize" html input in a reliable and
-flexible fashion, then this module is for you.
-
-I wasn't satisfied with HTML::Sanitizer because it is based on
-HTML::TreeBuilder, so I thought I'd write something similar that
-works directly with HTML::Parser.
-
-=head1 METHODS
-
-First a note on documentation: just study the L<EXAMPLE|"EXAMPLE"> below.
-It's all the documentation you could need
-
-Also, be sure to read all the comments as well as
-L<How does it work?|"How does it work?">.
-
-If you're new to perl, good luck to you.
-
-=cut
 
 use strict;
 use warnings;
@@ -111,12 +65,6 @@ sub new {
     return $self;
 }
 
-=head2 comment
-
-    warn "comments are  ", $p->comment ? 'allowed' : 'not allowed';
-    $p->comment(0);  # off by default
-
-=cut
 
 sub comment {
     return
@@ -126,12 +74,6 @@ sub comment {
     return;
 }
 
-=head2 process
-
-    warn "process instructions are  ", $p->process ? 'allowed' : 'not allowed';
-    $p->process(0);  # off by default
-
-=cut
 
 
 sub process {
@@ -143,18 +85,6 @@ sub process {
 }
 
 
-=head2 script
-
-    warn "script tags (and everything in between) are supressed"
-        if $p->script;      # off by default
-    $p->script( 0 || 1 );
-
-B<**> Please note that this is implemented
-using HTML::Parser's ignore_elements function,
-so if C<script> is set to true,
-all script tags encountered will be validated like all other tags.
-
-=cut
 
 sub script {
     return
@@ -164,18 +94,6 @@ sub script {
     return;
 }
 
-=head2 style
-
-    warn "style tags (and everything in between) are supressed"
-        if $p->style;       # off by default
-    $p->style( 0 || 1 );
-
-B<**> Please note that this is implemented
-using HTML::Parser's ignore_elements function,
-so if C<style> is set to true,
-all style tags encountered will be validated like all other tags.
-
-=cut
 
 sub style {
     return
@@ -185,11 +103,6 @@ sub style {
     return;
 }
 
-=head2 allow
-
-    $p->allow(qw[ t a g s ]);
-
-=cut
 
 sub allow {
     my $self = shift;
@@ -202,11 +115,6 @@ sub allow {
 }
 
 
-=head2 deny
-
-    $p->deny(qw[ t a g s ]);
-
-=cut
 
 sub deny {
     my $self = shift;
@@ -220,19 +128,6 @@ sub deny {
     return;
 }
 
-=head2 rules
-
-    $p->rules(
-        img => {
-            src => qr{^(?!http://)}i, # only relative image links allowed
-            alt => 1,                 # alt attribute allowed
-            '*' => 0,                 # deny all other attributes
-        },
-        b => 1,
-        ...
-    );
-
-=cut
 
 sub rules{
     my $self = shift;
@@ -246,18 +141,6 @@ sub rules{
     return;
 }
 
-=head2 default
-
-    print "default is ", $p->default();
-    $p->default(1);      # allow tags by default
-    $p->default(
-        undef,           # don't change
-        {                # default attribute rules
-            '*' => 1,    # allow attributes by default
-        }
-    );
-
-=cut
 
 sub default {
     return
@@ -271,16 +154,6 @@ sub default {
     return;
 }
 
-=head2 scrub_file
-
-    $html = $scrubber->scrub_file('foo.html');   ## returns giant string
-    die "Eeek $!" unless defined $html;  ## opening foo.html may have failed
-    $scrubber->scrub_file('foo.html', 'new.html') or die "Eeek $!";
-    $scrubber->scrub_file('foo.html', *STDOUT)
-        or die "Eeek $!"
-            if fileno STDOUT;
-
-=cut
 
 sub scrub_file {
     if(@_ > 2){
@@ -298,16 +171,6 @@ sub scrub_file {
     return 1;
 }
 
-=head2 scrub
-
-    print $scrubber->scrub($html);  ## returns giant string
-    $scrubber->scrub($html, 'new.html') or die "Eeek $!";
-    $scrubber->scrub($html', *STDOUT)
-        or die "Eeek $!"
-            if fileno STDOUT;
-
-
-=cut
 
 sub scrub {
     if(@_ > 2){
@@ -327,11 +190,6 @@ sub scrub {
 }
 
 
-=for comment _out
-    $scrubber->_out(*STDOUT) if fileno STDOUT;
-    $scrubber->_out('foo.html') or die "eeek $!";
-
-=cut
 
 sub _out {
     my($self, $o ) = @_;
@@ -350,11 +208,6 @@ sub _out {
 }
 
 
-=for comment _validate
-Uses $self->{_rules} to do attribute validation.
-Takes tag, rule('_' || $tag), attrref.
-
-=cut
 
 sub _validate {
     my($s, $t, $r, $a, $as) = @_;
@@ -391,13 +244,6 @@ sub _validate {
     return "<$t>";
 }
 
-=for comment _scrub_str
-
-I<default> handler, used by both _scrub and _scrub_fh
-Moved all the common code (ie all of it) into a single routine for
-ease of maintenance
-
-=cut
 
 sub _scrub_str {
     my ( $p, $e, $t, $a, $as, $text ) = @_;
@@ -449,24 +295,12 @@ sub _scrub_str {
     return $outstr;
 }
 
-=for comment _scrub_fh
-
-I<default> handler, does the scrubbing if we're scrubbing out to a file.
-Now calls _scrub_str and pushes that out to a file.
-
-=cut
 
 sub _scrub_fh {
 
     print { $_[0]->{"\0_s"}->{_out} } _scrub_str(@_);
 }
 
-=for comment _scrub
-
-I<default> handler, does the scrubbing if we're returning a giant string.
-Now calls _scrub_str and appends that to the output string.
-
-=cut
 
 sub _scrub {
 
@@ -528,6 +362,168 @@ sub DESTROY {
 #perl -ne"chomp;print $_;print qq'\t\t# test ', ++$a if /ok\(/;print $/" test.pl >test2.pl
 #perl -ne"chomp;print $_;if( /ok\(/ ){s/\#test \d+$//;print qq'\t\t# test ', ++$a }print $/" test.pl >test2.pl
 #perl -ne"chomp;if(/ok\(/){s/# test .*$//;print$_,qq'\t\t# test ',++$a}else{print$_}print$/" test.pl >test2.pl
+
+
+__END__
+=pod
+
+=for stopwords html
+
+=head1 NAME
+
+HTML::Scrubber - Perl extension for scrubbing/sanitizing html
+
+=head1 VERSION
+
+version 0.09
+
+=head1 SYNOPSIS
+
+    use HTML::Scrubber;
+
+    my $scrubber = HTML::Scrubber->new( allow => [ qw[ p b i u hr br ] ] );
+    print $scrubber->scrub('<p><b>bold</b> <em>missing</em></p>');
+    # output is: <p><b>bold</b> </p>
+
+    # more complex input
+    my $html = q[
+    <style type="text/css"> BAD { background: #666; color: #666;} </style>
+    <script language="javascript"> alert("Hello, I am EVIL!");    </script>
+    <HR>
+        a   => <a href=1>link </a>
+        br  => <br>
+        b   => <B> bold </B>
+        u   => <U> UNDERLINE </U>
+    ];
+
+    print $scrubber->scrub($html);
+
+    $scrubber->deny( qw[ p b i u hr br ] );
+
+    print $scrubber->scrub($html);
+
+=head1 DESCRIPTION
+
+If you wanna "scrub" or "sanitize" html input in a reliable and
+flexible fashion, then this module is for you.
+
+I wasn't satisfied with HTML::Sanitizer because it is based on
+HTML::TreeBuilder, so I thought I'd write something similar that
+works directly with HTML::Parser.
+
+=head1 METHODS
+
+First a note on documentation: just study the L<EXAMPLE|"EXAMPLE"> below.
+It's all the documentation you could need
+
+Also, be sure to read all the comments as well as
+L<How does it work?|"How does it work?">.
+
+If you're new to perl, good luck to you.
+
+=head2 comment
+
+    warn "comments are  ", $p->comment ? 'allowed' : 'not allowed';
+    $p->comment(0);  # off by default
+
+=head2 process
+
+    warn "process instructions are  ", $p->process ? 'allowed' : 'not allowed';
+    $p->process(0);  # off by default
+
+=head2 script
+
+    warn "script tags (and everything in between) are supressed"
+        if $p->script;      # off by default
+    $p->script( 0 || 1 );
+
+B<**> Please note that this is implemented
+using HTML::Parser's ignore_elements function,
+so if C<script> is set to true,
+all script tags encountered will be validated like all other tags.
+
+=head2 style
+
+    warn "style tags (and everything in between) are supressed"
+        if $p->style;       # off by default
+    $p->style( 0 || 1 );
+
+B<**> Please note that this is implemented
+using HTML::Parser's ignore_elements function,
+so if C<style> is set to true,
+all style tags encountered will be validated like all other tags.
+
+=head2 allow
+
+    $p->allow(qw[ t a g s ]);
+
+=head2 deny
+
+    $p->deny(qw[ t a g s ]);
+
+=head2 rules
+
+    $p->rules(
+        img => {
+            src => qr{^(?!http://)}i, # only relative image links allowed
+            alt => 1,                 # alt attribute allowed
+            '*' => 0,                 # deny all other attributes
+        },
+        b => 1,
+        ...
+    );
+
+=head2 default
+
+    print "default is ", $p->default();
+    $p->default(1);      # allow tags by default
+    $p->default(
+        undef,           # don't change
+        {                # default attribute rules
+            '*' => 1,    # allow attributes by default
+        }
+    );
+
+=head2 scrub_file
+
+    $html = $scrubber->scrub_file('foo.html');   ## returns giant string
+    die "Eeek $!" unless defined $html;  ## opening foo.html may have failed
+    $scrubber->scrub_file('foo.html', 'new.html') or die "Eeek $!";
+    $scrubber->scrub_file('foo.html', *STDOUT)
+        or die "Eeek $!"
+            if fileno STDOUT;
+
+=head2 scrub
+
+    print $scrubber->scrub($html);  ## returns giant string
+    $scrubber->scrub($html, 'new.html') or die "Eeek $!";
+    $scrubber->scrub($html', *STDOUT)
+        or die "Eeek $!"
+            if fileno STDOUT;
+
+=for comment _out
+    $scrubber->_out(*STDOUT) if fileno STDOUT;
+    $scrubber->_out('foo.html') or die "eeek $!";
+
+=for comment _validate
+Uses $self->{_rules} to do attribute validation.
+Takes tag, rule('_' || $tag), attrref.
+
+=for comment _scrub_str
+
+I<default> handler, used by both _scrub and _scrub_fh
+Moved all the common code (ie all of it) into a single routine for
+ease of maintenance
+
+=for comment _scrub_fh
+
+I<default> handler, does the scrubbing if we're scrubbing out to a file.
+Now calls _scrub_str and pushes that out to a file.
+
+=for comment _scrub
+
+I<default> handler, does the scrubbing if we're returning a giant string.
+Now calls _scrub_str and appends that to the output string.
 
 =head1 How does it work?
 
@@ -672,7 +668,6 @@ the default attribute rule is applied.
 
 =for example end
 
-
 =head2 FUN
 
 If you have Test::Inline (and you've installed HTML::Scrubber), try
@@ -684,4 +679,50 @@ If you have Test::Inline (and you've installed HTML::Scrubber), try
 
 L<HTML::Parser>, L<Test::Inline>, L<HTML::Sanitizer>.
 
+=head1 INSTALLATION
+
+See perlmodinstall for information and options on installing Perl modules.
+
+=head1 BUGS AND LIMITATIONS
+
+No bugs have been reported.
+
+Please report any bugs or feature requests through the web interface at
+L<http://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Scrubber>.
+
+=head1 AVAILABILITY
+
+The project homepage is L<http://search.cpan.org/dist/HTML-Scrubber>.
+
+The latest version of this module is available from the Comprehensive Perl
+Archive Network (CPAN). Visit L<http://www.perl.com/CPAN/> to find a CPAN
+site near you, or see L<http://search.cpan.org/dist/HTML-Scrubber/>.
+
+The development version lives at L<http://github.com/nigelm/html-scrubber>
+and may be cloned from L<git://github.com/nigelm/html-scrubber.git>.
+Instead of sending patches, please fork this project using the standard
+git and github infrastructure.
+
+=head1 AUTHORS
+
+=over 4
+
+=item *
+
+Nigel Metheringham <nigelm@cpan.org>
+
+=item *
+
+D. H. <podmaster@cpan.org>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2011 by Nigel Metheringham, 2003-2004 D. H..
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
+
