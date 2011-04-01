@@ -2,6 +2,12 @@ Revision history for Perl extension HTML::Scrubber.
 
 {{$NEXT}}
     - Basic conversion to Dist::Zilla/git
+    - Tidies to keep Perl::Critic happier
+    - Removed use of naked filehandles
+    - Reworked tests to not use predicable temp file name
+    - Collapsed duplicate code to a single version
+    - Various documentation tweaks
+    - Change of maintainer as PODMASTER cannot be contacted
 
 0.08  Thu Apr  1 14:14:38 2004
     - removed test which relied on stuff that changed in HTML-Parser-3.36

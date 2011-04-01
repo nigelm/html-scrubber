@@ -164,9 +164,9 @@ the default attribute rule is applied.
     #!/usr/bin/perl -w
     use HTML::Scrubber;
     use strict;
-                                                                            #
+
     my @allow = qw[ br hr b a ];
-                                                                            #
+
     my @rules = (
         script => 0,
         img => {
@@ -175,7 +175,7 @@ the default attribute rule is applied.
             '*' => 0,                 # deny all other attributes
         },
     );
-                                                                            #
+
     my @default = (
         0   =>    # default rule, deny all tags
         {
@@ -210,13 +210,13 @@ the default attribute rule is applied.
             'type'        => 0,
         }
     );
-                                                                            #
+
     my $scrubber = HTML::Scrubber->new();
     $scrubber->allow( @allow );
     $scrubber->rules( @rules ); # key/value pairs
     $scrubber->default( @default );
     $scrubber->comment(1); # 1 allow, 0 deny
-                                                                            #
+
     ## preferred way to create the same object
     $scrubber = HTML::Scrubber->new(
         allow   => \@allow,
@@ -225,9 +225,9 @@ the default attribute rule is applied.
         comment => 1,
         process => 0,
     );
-                                                                            #
+
     require Data::Dumper,die Data::Dumper::Dumper($scrubber) if @ARGV;
-                                                                            #
+
     my $it = q[
         <?php   echo(" EVIL EVIL EVIL "); ?>    <!-- asdf -->
         <hr>
@@ -241,7 +241,7 @@ the default attribute rule is applied.
             </A>
         </A> <br>
     ];
-                                                                            #
+
     print "#original text",$/, $it, $/;
     print
         "#scrubbed text (default ",
@@ -254,10 +254,10 @@ the default attribute rule is applied.
         $/,
         $scrubber->scrub($it),
         $/;
-                                                                            #
+
     $scrubber->default(1); # allow all tags by default
     $scrubber->comment(0); # deny comments
-                                                                            #
+
     print
         "#scrubbed text (default ",
         $scrubber->default(),
@@ -269,12 +269,12 @@ the default attribute rule is applied.
         $/,
         $scrubber->scrub($it),
         $/;
-                                                                            #
+
     $scrubber->process(1);        # allow process instructions (dangerous)
     $default[0] = 1;              # allow all tags by default
     $default[1]->{'*'} = 0;       # deny all attributes by default
     $scrubber->default(@default); # set the default again
-                                                                            #
+
     print
         "#scrubbed text (default ",
         $scrubber->default(),
