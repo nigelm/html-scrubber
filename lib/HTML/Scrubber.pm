@@ -337,10 +337,9 @@ sub _out {
     my($self, $o ) = @_;
 
     unless( ref $o and ref \$o ne 'GLOB') {
-        local *F;
-        open F, ">$o" or return undef;
-        binmode F;
-        $self->{_out} = *F;
+        open my $F, '>', $o or return;
+        binmode $F;
+        $self->{_out} = $F;
     } else {
         $self->{_out} = $o;
     }
