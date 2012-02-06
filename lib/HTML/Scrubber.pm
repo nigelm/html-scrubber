@@ -61,7 +61,7 @@ use strict;
 use warnings;
 use HTML::Parser();
 use HTML::Entities;
-use vars qw[ @_scrub @_scrub_fh ];
+our( @_scrub, @_scrub_fh );
 
 # my my my my, these here to prevent foolishness like
 # http://perlmonks.org/index.pl?node_id=251127#Stealing+Lexicals
