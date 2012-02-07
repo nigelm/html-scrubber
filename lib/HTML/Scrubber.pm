@@ -1,7 +1,5 @@
-## no critic
 package HTML::Scrubber;
 
-## use critic
 # ABSTRACT: Perl extension for scrubbing/sanitizing html
 
 =begin :prelude
@@ -62,6 +60,9 @@ use warnings;
 use HTML::Parser();
 use HTML::Entities;
 our( @_scrub, @_scrub_fh );
+
+# VERSION
+# AUTHORITY
 
 # my my my my, these here to prevent foolishness like
 # http://perlmonks.org/index.pl?node_id=251127#Stealing+Lexicals
@@ -394,7 +395,7 @@ sub _validate {
 =for comment _scrub_str
 
 I<default> handler, used by both _scrub and _scrub_fh
-Moved all the common code (ie all of it) into a single routine for
+Moved all the common code (basically all of it) into a single routine for
 ease of maintenance
 
 =cut
