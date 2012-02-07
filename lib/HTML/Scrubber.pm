@@ -564,11 +564,11 @@ the default attribute rule is applied.
         0   =>    # default rule, deny all tags
         {
             '*'           => 1, # default rule, allow all attributes
-            'href'        => qr{^(?!(?:java)?script)}i,
-            'src'         => qr{^(?!(?:java)?script)}i,
+            'href'        => qr{^(?:http|https|ftp)://}i,
+            'src'         => qr{^(?:http|https|ftp)://}i,
     #   If your perl doesn't have qr
     #   just use a string with length greater than 1
-            'cite'        => '(?i-xsm:^(?!(?:java)?script))',
+            'cite'        => '(?i-xsm:^(?:http|https|ftp):)',
             'language'    => 0,
             'name'        => 1, # could be sneaky, but hey ;)
             'onblur'      => 0,

@@ -1,6 +1,7 @@
 Revision history for Perl extension HTML::Scrubber.
 
 {{$NEXT}}
+    - RT3008 Changed examples to be XSS free
 
 0.09      2011-04-01 16:35:50 Europe/London
     - Basic conversion to Dist::Zilla/git
