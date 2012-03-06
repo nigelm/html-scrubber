@@ -1,12 +1,9 @@
-# Before `make install' is performed this script should be runnable with
-# `make test'. After `make install' it should work as `perl test.pl'
+# Check this module loads
+#
+use Test::More tests => 1;
 
-#########################
+BEGIN {
+    use_ok( 'HTML::Scrubber' ) || print "Bail out!\n";
+}
 
-# change 'tests => 1' to 'tests => ';
-
-use Test;
-BEGIN { plan tests => 1 };
-use HTML::Scrubber;
-ok(1);
-
+diag( "Testing HTML::Scrubber $HTML::Scrubber::VERSION, Perl $], $^X" );
