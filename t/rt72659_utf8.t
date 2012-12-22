@@ -6,7 +6,7 @@
 use strict;
 use utf8;
 use File::Spec;
-use Test::More qw(no_plan);
+use Test::More;
 
 use_ok('HTML::Scrubber');
 

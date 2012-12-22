@@ -6,7 +6,7 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing html
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 SYNOPSIS
 
@@ -143,7 +143,7 @@ Takes tag, rule('_' || $tag), attrref.
 =for comment _scrub_str
 
 I<default> handler, used by both _scrub and _scrub_fh
-Moved all the common code (ie all of it) into a single routine for
+Moved all the common code (basically all of it) into a single routine for
 ease of maintenance
 
 =for comment _scrub_fh
@@ -323,7 +323,7 @@ L<http://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Scrubber>.
 
 =head1 AVAILABILITY
 
-The project homepage is L<http://search.cpan.org/dist/HTML-Scrubber>.
+The project homepage is L<https://metacpan.org/release/HTML-Scrubber>.
 
 The latest version of this module is available from the Comprehensive Perl
 Archive Network (CPAN). Visit L<http://www.perl.com/CPAN/> to find a CPAN
@@ -350,7 +350,7 @@ D. H. <podmaster@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Nigel Metheringham, 2003-2004 D. H..
+This software is copyright (c) 2012 by Nigel Metheringham, 2003-2004 D. H..
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
