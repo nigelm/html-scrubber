@@ -57,7 +57,7 @@ If you're new to perl, good luck to you.
 
 use strict;
 use warnings;
-use HTML::Parser();
+use HTML::Parser 3.47 ();
 use HTML::Entities;
 our( @_scrub, @_scrub_fh );
 
@@ -79,6 +79,7 @@ sub new {
         unbroken_text   => 1,
         case_sensitive  => 0,
         boolean_attribute_value => undef,
+        empty_element_tags => 1,
     );
 
     my $self = {
@@ -295,6 +296,7 @@ sub scrub_file {
     $_[0]->{_p}->parse_file($_[1]);
 
     return delete $_[0]->{_r} unless exists $_[0]->{_out};
+    print { $_[0]->{_out} } $_[0]->{_r} if length $_[0]->{_r};
     delete $_[0]->{_out};
     return 1;
 }
@@ -424,11 +426,19 @@ sub _scrub_str {
         }
     }
     elsif ( $e eq 'end' ) {
+        my $place = 0;
         if ( exists $s->{_rules}->{$t} ) {
-            $outstr .= "</$t>" if $s->{_rules}->{$t};
+            $place = 1 if $s->{_rules}->{$t};
         }
         elsif ( $s->{_rules}->{'*'} ) {
-            $outstr .= "</$t>";
+            $place = 1;
+        }
+        if ( $place ) {
+            if ( length $text ) {
+                $outstr .= "</$t>";
+            } else {
+                substr $s->{_r}, -1, 0, ' /';
+            }
         }
     }
     elsif ( $e eq 'comment' ) {
@@ -458,8 +468,9 @@ Now calls _scrub_str and pushes that out to a file.
 =cut
 
 sub _scrub_fh {
-
-    print { $_[0]->{"\0_s"}->{_out} } _scrub_str(@_);
+    my $self =  $_[0]->{"\0_s"};
+    print { $self->{_out} } $self->{'_r'} if length $self->{_r};
+    $self->{'_r'} = _scrub_str(@_);
 }
 
 =for comment _scrub
