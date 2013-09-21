@@ -367,13 +367,11 @@ sub _validate {
     my %f;
 
     for my $k( keys %$a ) {
-        if( exists $r->{$k} ) {
-            if( ref $r->{$k} || length($r->{$k}) > 1 ) {
-                $f{$k} = $a->{$k} if $a->{$k} =~ m{$r->{$k}};
-            } elsif( $r->{$k} ) {
-                $f{$k} = $a->{$k};
-            }
-        } elsif( exists $r->{'*'} and $r->{'*'} ) {
+        my $check = exists $r->{$k}? $r->{$k} : exists $r->{'*'}? $r->{'*'} : next;
+
+        if( ref $check || length($check) > 1 ) {
+            $f{$k} = $a->{$k} if $a->{$k} =~ m{$check};
+        } elsif( $check ) {
             $f{$k} = $a->{$k};
         }
     }
