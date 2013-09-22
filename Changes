@@ -4,6 +4,7 @@ Revision history for Perl extension HTML::Scrubber.
     - RT3008 Changed examples to be XSS free
     - RT19063, RT25477 fixed handling of self closing tags,
       for example '<hr />'
+    - * attrbute rule can be a regexp
     - callbacks in rules to check or adjust attributes with
       custom code (RT15747)
 
