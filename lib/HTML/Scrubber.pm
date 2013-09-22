@@ -230,9 +230,18 @@ sub deny {
             alt => 1,                 # alt attribute allowed
             '*' => 0,                 # deny all other attributes
         },
+        a => {
+            href => sub { ... },      # check or adjust with a callback
+        },
         b => 1,
         ...
     );
+
+Updates set of attribute rules. Each rule can be 1/0, regular expression
+or a callback. Values longer than 1 char are treated as regexps. Callback
+is called with the following arguments: this object, tag name, attribute
+name and attribute value, should return empty list to drop attribute,
+C<undef> to keep it without value or a new scalar value.
 
 =cut
 
@@ -369,7 +378,11 @@ sub _validate {
     for my $k( keys %$a ) {
         my $check = exists $r->{$k}? $r->{$k} : exists $r->{'*'}? $r->{'*'} : next;
 
-        if( ref $check || length($check) > 1 ) {
+        if( ref $check eq 'CODE' ) {
+            my @v = $check->( $s, $t, $k, $a->{$k}, $a, \%f );
+            next unless @v;
+            $f{$k} = shift @v;
+        } elsif( ref $check || length($check) > 1 ) {
             $f{$k} = $a->{$k} if $a->{$k} =~ m{$check};
         } elsif( $check ) {
             $f{$k} = $a->{$k};
