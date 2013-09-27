@@ -1,6 +1,8 @@
 Revision history for Perl extension HTML::Scrubber.
 
 {{$NEXT}}
+
+0.10      2013-09-27 15:05:03 Europe/London
     - RT3008 Changed examples to be XSS free
     - RT19063, RT25477 fixed handling of self closing tags,
       for example '<hr />'
