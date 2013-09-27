@@ -4,7 +4,7 @@ package HTML::Scrubber;
 
 =begin :prelude
 
-=for stopwords html
+=for stopwords html cpan callback homepage
 
 =end :prelude
 
@@ -36,7 +36,7 @@ package HTML::Scrubber;
 
 =head1 DESCRIPTION
 
-If you wanna "scrub" or "sanitize" html input in a reliable and
+If you want to "scrub" or "sanitize" html input in a reliable and
 flexible fashion, then this module is for you.
 
 I wasn't satisfied with HTML::Sanitizer because it is based on
