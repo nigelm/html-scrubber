@@ -1,21 +1,16 @@
-## no critic
 package HTML::Scrubber;
-BEGIN {
-  $HTML::Scrubber::VERSION = '0.09';
-}
-BEGIN {
-  $HTML::Scrubber::AUTHORITY = 'cpan:NIGELM';
-}
 
-## use critic
 # ABSTRACT: Perl extension for scrubbing/sanitizing html
 
 
 use strict;
 use warnings;
-use HTML::Parser();
+use HTML::Parser 3.47 ();
 use HTML::Entities;
-use vars qw[ @_scrub @_scrub_fh ];
+our( @_scrub, @_scrub_fh );
+
+our $VERSION = '0.10'; # TRIAL VERSION
+our $AUTHORITY = 'cpan:NIGELM'; # AUTHORITY
 
 # my my my my, these here to prevent foolishness like
 # http://perlmonks.org/index.pl?node_id=251127#Stealing+Lexicals
@@ -32,6 +27,7 @@ sub new {
         unbroken_text   => 1,
         case_sensitive  => 0,
         boolean_attribute_value => undef,
+        empty_element_tags => 1,
     );
 
     my $self = {
@@ -167,6 +163,7 @@ sub scrub_file {
     $_[0]->{_p}->parse_file($_[1]);
 
     return delete $_[0]->{_r} unless exists $_[0]->{_out};
+    print { $_[0]->{_out} } $_[0]->{_r} if length $_[0]->{_r};
     delete $_[0]->{_out};
     return 1;
 }
@@ -217,13 +214,15 @@ sub _validate {
     my %f;
 
     for my $k( keys %$a ) {
-        if( exists $r->{$k} ) {
-            if( ref $r->{$k} || length($r->{$k}) > 1 ) {
-                $f{$k} = $a->{$k} if $a->{$k} =~ m{$r->{$k}};
-            } elsif( $r->{$k} ) {
-                $f{$k} = $a->{$k};
-            }
-        } elsif( exists $r->{'*'} and $r->{'*'} ) {
+        my $check = exists $r->{$k}? $r->{$k} : exists $r->{'*'}? $r->{'*'} : next;
+
+        if( ref $check eq 'CODE' ) {
+            my @v = $check->( $s, $t, $k, $a->{$k}, $a, \%f );
+            next unless @v;
+            $f{$k} = shift @v;
+        } elsif( ref $check || length($check) > 1 ) {
+            $f{$k} = $a->{$k} if $a->{$k} =~ m{$check};
+        } elsif( $check ) {
             $f{$k} = $a->{$k};
         }
     }
@@ -269,11 +268,19 @@ sub _scrub_str {
         }
     }
     elsif ( $e eq 'end' ) {
+        my $place = 0;
         if ( exists $s->{_rules}->{$t} ) {
-            $outstr .= "</$t>" if $s->{_rules}->{$t};
+            $place = 1 if $s->{_rules}->{$t};
         }
         elsif ( $s->{_rules}->{'*'} ) {
-            $outstr .= "</$t>";
+            $place = 1;
+        }
+        if ( $place ) {
+            if ( length $text ) {
+                $outstr .= "</$t>";
+            } else {
+                substr $s->{_r}, -1, 0, ' /';
+            }
         }
     }
     elsif ( $e eq 'comment' ) {
@@ -297,8 +304,9 @@ sub _scrub_str {
 
 
 sub _scrub_fh {
-
-    print { $_[0]->{"\0_s"}->{_out} } _scrub_str(@_);
+    my $self =  $_[0]->{"\0_s"};
+    print { $self->{_out} } $self->{'_r'} if length $self->{_r};
+    $self->{'_r'} = _scrub_str(@_);
 }
 
 
@@ -363,11 +371,11 @@ sub DESTROY {
 #perl -ne"chomp;print $_;if( /ok\(/ ){s/\#test \d+$//;print qq'\t\t# test ', ++$a }print $/" test.pl >test2.pl
 #perl -ne"chomp;if(/ok\(/){s/# test .*$//;print$_,qq'\t\t# test ',++$a}else{print$_}print$/" test.pl >test2.pl
 
-
 __END__
+
 =pod
 
-=for stopwords html
+=for stopwords html cpan callback homepage
 
 =head1 NAME
 
@@ -375,7 +383,7 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing html
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 SYNOPSIS
 
@@ -404,7 +412,7 @@ version 0.09
 
 =head1 DESCRIPTION
 
-If you wanna "scrub" or "sanitize" html input in a reliable and
+If you want to "scrub" or "sanitize" html input in a reliable and
 flexible fashion, then this module is for you.
 
 I wasn't satisfied with HTML::Sanitizer because it is based on
@@ -469,9 +477,18 @@ all style tags encountered will be validated like all other tags.
             alt => 1,                 # alt attribute allowed
             '*' => 0,                 # deny all other attributes
         },
+        a => {
+            href => sub { ... },      # check or adjust with a callback
+        },
         b => 1,
         ...
     );
+
+Updates set of attribute rules. Each rule can be 1/0, regular expression
+or a callback. Values longer than 1 char are treated as regexps. Callback
+is called with the following arguments: this object, tag name, attribute
+name and attribute value, should return empty list to drop attribute,
+C<undef> to keep it without value or a new scalar value.
 
 =head2 default
 
@@ -512,7 +529,7 @@ Takes tag, rule('_' || $tag), attrref.
 =for comment _scrub_str
 
 I<default> handler, used by both _scrub and _scrub_fh
-Moved all the common code (ie all of it) into a single routine for
+Moved all the common code (basically all of it) into a single routine for
 ease of maintenance
 
 =for comment _scrub_fh
@@ -559,11 +576,11 @@ the default attribute rule is applied.
         0   =>    # default rule, deny all tags
         {
             '*'           => 1, # default rule, allow all attributes
-            'href'        => qr{^(?!(?:java)?script)}i,
-            'src'         => qr{^(?!(?:java)?script)}i,
+            'href'        => qr{^(?:http|https|ftp)://}i,
+            'src'         => qr{^(?:http|https|ftp)://}i,
     #   If your perl doesn't have qr
     #   just use a string with length greater than 1
-            'cite'        => '(?i-xsm:^(?!(?:java)?script))',
+            'cite'        => '(?i-xsm:^(?:http|https|ftp):)',
             'language'    => 0,
             'name'        => 1, # could be sneaky, but hey ;)
             'onblur'      => 0,
@@ -685,27 +702,24 @@ See perlmodinstall for information and options on installing Perl modules.
 
 =head1 BUGS AND LIMITATIONS
 
-No bugs have been reported.
-
-Please report any bugs or feature requests through the web interface at
-L<http://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Scrubber>.
+You can make new bug reports, and view existing ones, through the
+web interface at L<http://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Scrubber>.
 
 =head1 AVAILABILITY
 
-The project homepage is L<http://search.cpan.org/dist/HTML-Scrubber>.
+The project homepage is L<https://metacpan.org/release/HTML-Scrubber>.
 
 The latest version of this module is available from the Comprehensive Perl
 Archive Network (CPAN). Visit L<http://www.perl.com/CPAN/> to find a CPAN
-site near you, or see L<http://search.cpan.org/dist/HTML-Scrubber/>.
-
-The development version lives at L<http://github.com/nigelm/html-scrubber>
-and may be cloned from L<git://github.com/nigelm/html-scrubber.git>.
-Instead of sending patches, please fork this project using the standard
-git and github infrastructure.
+site near you, or see L<https://metacpan.org/module/HTML::Scrubber/>.
 
 =head1 AUTHORS
 
 =over 4
+
+=item *
+
+Ruslan Zakirov <Ruslan.Zakirov@gmail.com>
 
 =item *
 
@@ -719,10 +733,9 @@ D. H. <podmaster@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Nigel Metheringham, 2003-2004 D. H..
+This software is copyright (c) 2013 by Ruslan Zakirov, Nigel Metheringham, 2003-2004 D. H..
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

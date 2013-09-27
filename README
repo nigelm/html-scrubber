@@ -2,7 +2,7 @@ NAME
     HTML::Scrubber - Perl extension for scrubbing/sanitizing html
 
 VERSION
-    version 0.09
+    version 0.10
 
 SYNOPSIS
         use HTML::Scrubber;
@@ -29,8 +29,8 @@ SYNOPSIS
         print $scrubber->scrub($html);
 
 DESCRIPTION
-    If you wanna "scrub" or "sanitize" html input in a reliable and flexible
-    fashion, then this module is for you.
+    If you want to "scrub" or "sanitize" html input in a reliable and
+    flexible fashion, then this module is for you.
 
     I wasn't satisfied with HTML::Sanitizer because it is based on
     HTML::TreeBuilder, so I thought I'd write something similar that works
@@ -83,9 +83,18 @@ METHODS
                 alt => 1,                 # alt attribute allowed
                 '*' => 0,                 # deny all other attributes
             },
+            a => {
+                href => sub { ... },      # check or adjust with a callback
+            },
             b => 1,
             ...
         );
+
+    Updates set of attribute rules. Each rule can be 1/0, regular expression
+    or a callback. Values longer than 1 char are treated as regexps.
+    Callback is called with the following arguments: this object, tag name,
+    attribute name and attribute value, should return empty list to drop
+    attribute, "undef" to keep it without value or a new scalar value.
 
   default
         print "default is ", $p->default();
@@ -113,7 +122,8 @@ METHODS
                 if fileno STDOUT;
 
     *default* handler, used by both _scrub and _scrub_fh Moved all the
-    common code (ie all of it) into a single routine for ease of maintenance
+    common code (basically all of it) into a single routine for ease of
+    maintenance
 
     *default* handler, does the scrubbing if we're scrubbing out to a file.
     Now calls _scrub_str and pushes that out to a file.
@@ -150,11 +160,11 @@ How does it work?
             0   =>    # default rule, deny all tags
             {
                 '*'           => 1, # default rule, allow all attributes
-                'href'        => qr{^(?!(?:java)?script)}i,
-                'src'         => qr{^(?!(?:java)?script)}i,
+                'href'        => qr{^(?:http|https|ftp)://}i,
+                'src'         => qr{^(?:http|https|ftp)://}i,
         #   If your perl doesn't have qr
         #   just use a string with length greater than 1
-                'cite'        => '(?i-xsm:^(?!(?:java)?script))',
+                'cite'        => '(?i-xsm:^(?:http|https|ftp):)',
                 'language'    => 0,
                 'name'        => 1, # could be sneaky, but hey ;)
                 'onblur'      => 0,
@@ -271,32 +281,28 @@ INSTALLATION
     modules.
 
 BUGS AND LIMITATIONS
-    No bugs have been reported.
-
-    Please report any bugs or feature requests through the web interface at
+    You can make new bug reports, and view existing ones, through the web
+    interface at
     <http://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Scrubber>.
 
 AVAILABILITY
-    The project homepage is <http://search.cpan.org/dist/HTML-Scrubber>.
+    The project homepage is <https://metacpan.org/release/HTML-Scrubber>.
 
     The latest version of this module is available from the Comprehensive
     Perl Archive Network (CPAN). Visit <http://www.perl.com/CPAN/> to find a
-    CPAN site near you, or see <http://search.cpan.org/dist/HTML-Scrubber/>.
-
-    The development version lives at
-    <http://github.com/nigelm/html-scrubber> and may be cloned from
-    <git://github.com/nigelm/html-scrubber.git>. Instead of sending patches,
-    please fork this project using the standard git and github
-    infrastructure.
+    CPAN site near you, or see
+    <https://metacpan.org/module/HTML::Scrubber/>.
 
 AUTHORS
+    *   Ruslan Zakirov <Ruslan.Zakirov@gmail.com>
+
     *   Nigel Metheringham <nigelm@cpan.org>
 
     *   D. H. <podmaster@cpan.org>
 
 COPYRIGHT AND LICENSE
-    This software is copyright (c) 2011 by Nigel Metheringham, 2003-2004 D.
-    H..
+    This software is copyright (c) 2013 by Ruslan Zakirov, Nigel
+    Metheringham, 2003-2004 D. H..
 
     This is free software; you can redistribute it and/or modify it under
     the same terms as the Perl 5 programming language system itself.
