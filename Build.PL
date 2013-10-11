@@ -19,7 +19,7 @@ my %module_build_args = (
     "D. H. <podmaster\@cpan.org>"
   ],
   "dist_name" => "HTML-Scrubber",
-  "dist_version" => "0.10",
+  "dist_version" => "0.11",
   "license" => "perl",
   "module_name" => "HTML::Scrubber",
   "recommends" => {},

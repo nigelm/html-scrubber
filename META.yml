@@ -28,7 +28,7 @@ name: HTML-Scrubber
 provides:
   HTML::Scrubber:
     file: lib/HTML/Scrubber.pm
-    version: 0.10
+    version: 0.11
 requires:
   HTML::Entities: 0
   HTML::Parser: 3.47
@@ -38,7 +38,7 @@ resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Scrubber
   homepage: https://metacpan.org/release/HTML-Scrubber
   repository: git://github.com/nigelm/html-scrubber.git
-version: 0.10
+version: 0.11
 x_Dist_Zilla:
   perl:
     version: 5.018001
@@ -283,6 +283,6 @@ x_Dist_Zilla:
   zilla:
     class: Dist::Zilla::Dist::Builder
     config:
-      is_trial: 1
+      is_trial: 0
     version: 4.300039
 x_authority: cpan:NIGELM

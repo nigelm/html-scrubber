@@ -9,7 +9,7 @@ use HTML::Parser 3.47 ();
 use HTML::Entities;
 our( @_scrub, @_scrub_fh );
 
-our $VERSION = '0.10'; # TRIAL VERSION
+our $VERSION = '0.11'; # VERSION
 our $AUTHORITY = 'cpan:NIGELM'; # AUTHORITY
 
 # my my my my, these here to prevent foolishness like
@@ -383,7 +383,7 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing html
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =head1 SYNOPSIS
 

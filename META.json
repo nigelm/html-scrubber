@@ -60,10 +60,10 @@
    "provides" : {
       "HTML::Scrubber" : {
          "file" : "lib/HTML/Scrubber.pm",
-         "version" : "0.10"
+         "version" : "0.11"
       }
    },
-   "release_status" : "testing",
+   "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
          "mailto" : "bug-HTML-Scrubber@rt.cpan.org",
@@ -76,7 +76,7 @@
          "web" : "http://github.com/nigelm/html-scrubber"
       }
    },
-   "version" : "0.10",
+   "version" : "0.11",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018001"
@@ -390,7 +390,7 @@
       "zilla" : {
          "class" : "Dist::Zilla::Dist::Builder",
          "config" : {
-            "is_trial" : "1"
+            "is_trial" : "0"
          },
          "version" : "4.300039"
       }
