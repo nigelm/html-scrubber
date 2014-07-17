@@ -330,7 +330,7 @@ sub scrub {
 
     $_[0]->_optimize();# if $_[0]->{_optimize};
 
-    $_[0]->{_p}->parse($_[1]);
+    $_[0]->{_p}->parse($_[1]) if defined($_[1]);
     $_[0]->{_p}->eof();
 
     return delete $_[0]->{_r} unless exists $_[0]->{_out};
