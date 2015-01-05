@@ -705,6 +705,8 @@ If you have Test::Inline (and you've installed HTML::Scrubber), try
 
 =head1 SEE ALSO
 
-L<HTML::Parser>, L<Test::Inline>, L<HTML::Sanitizer>.
+L<HTML::Parser>, L<Test::Inline>.
+
+The HTML::Sanitizer module is no longer available on CPAN.
 
 =cut
