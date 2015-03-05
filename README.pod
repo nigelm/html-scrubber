@@ -10,6 +10,10 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing html
 
 version 0.11
 
+=head1 BUILD
+
+L<Master Build Results|https://travis-ci.org/mrcaron/html-scrubber>
+
 =head1 SYNOPSIS
 
     use HTML::Scrubber;
