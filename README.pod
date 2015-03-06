@@ -8,11 +8,7 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing html
 
 =head1 VERSION
 
-version 0.11
-
-=head1 BUILD
-
-L<Master Build Results|https://travis-ci.org/mrcaron/html-scrubber>
+version 0.12
 
 =head1 SYNOPSIS
 
@@ -362,8 +358,9 @@ D. H. <podmaster@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Ruslan Zakirov, Nigel Metheringham, 2003-2004 D. H..
+This software is copyright (c) 2015 by Ruslan Zakirov, Nigel Metheringham, 2003-2004 D. H..
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
+=cut
