@@ -325,6 +325,10 @@ L<HTML::Parser>, L<Test::Inline>, L<HTML::Sanitizer>.
 
 See perlmodinstall for information and options on installing Perl modules.
 
+=head1 CONTRIBUTING
+
+If you want to contribute to the development of this module, the code is on L<GitHub|http://github.com/nigelm/html-scrubber>. You'll need a perl environment with L<Dist::Zilla>, and if you're just getting started, there's some documentation on using Vagrant and Perlbrew L<here|http://mrcaron.github.io/2015/03/06/Perl-CPAN-Pull-Request.html>.
+
 =head1 BUGS AND LIMITATIONS
 
 You can make new bug reports, and view existing ones, through the
