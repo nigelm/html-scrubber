@@ -1,16 +1,19 @@
 NAME
+
     HTML::Scrubber - Perl extension for scrubbing/sanitizing html
 
 VERSION
-    version 0.11
+
+    version 0.12
 
 SYNOPSIS
-        use HTML::Scrubber;
 
+        use HTML::Scrubber;
+    
         my $scrubber = HTML::Scrubber->new( allow => [ qw[ p b i u hr br ] ] );
         print $scrubber->scrub('<p><b>bold</b> <em>missing</em></p>');
         # output is: <p><b>bold</b> </p>
-
+    
         # more complex input
         my $html = q[
         <style type="text/css"> BAD { background: #666; color: #666;} </style>
@@ -21,14 +24,15 @@ SYNOPSIS
             b   => <B> bold </B>
             u   => <U> UNDERLINE </U>
         ];
-
+    
         print $scrubber->scrub($html);
-
+    
         $scrubber->deny( qw[ p b i u hr br ] );
-
+    
         print $scrubber->scrub($html);
 
 DESCRIPTION
+
     If you want to "scrub" or "sanitize" html input in a reliable and
     flexible fashion, then this module is for you.
 
@@ -37,6 +41,7 @@ DESCRIPTION
     directly with HTML::Parser.
 
 METHODS
+
     First a note on documentation: just study the EXAMPLE below. It's all
     the documentation you could need
 
@@ -44,39 +49,46 @@ METHODS
 
     If you're new to perl, good luck to you.
 
-  comment
+ comment
+
         warn "comments are  ", $p->comment ? 'allowed' : 'not allowed';
         $p->comment(0);  # off by default
 
-  process
+ process
+
         warn "process instructions are  ", $p->process ? 'allowed' : 'not allowed';
         $p->process(0);  # off by default
 
-  script
+ script
+
         warn "script tags (and everything in between) are supressed"
             if $p->script;      # off by default
         $p->script( 0 || 1 );
 
     ** Please note that this is implemented using HTML::Parser's
-    ignore_elements function, so if "script" is set to true, all script tags
+    ignore_elements function, so if script is set to true, all script tags
     encountered will be validated like all other tags.
 
-  style
+ style
+
         warn "style tags (and everything in between) are supressed"
             if $p->style;       # off by default
         $p->style( 0 || 1 );
 
     ** Please note that this is implemented using HTML::Parser's
-    ignore_elements function, so if "style" is set to true, all style tags
+    ignore_elements function, so if style is set to true, all style tags
     encountered will be validated like all other tags.
 
-  allow
+ allow
+
         $p->allow(qw[ t a g s ]);
 
-  deny
+ deny
+
         $p->deny(qw[ t a g s ]);
 
-  rules
+ rules
+
         $p->rules(
             img => {
                 src => qr{^(?!http://)}i, # only relative image links allowed
@@ -90,13 +102,15 @@ METHODS
             ...
         );
 
-    Updates set of attribute rules. Each rule can be 1/0, regular expression
-    or a callback. Values longer than 1 char are treated as regexps.
-    Callback is called with the following arguments: this object, tag name,
-    attribute name and attribute value, should return empty list to drop
-    attribute, "undef" to keep it without value or a new scalar value.
+    Updates set of attribute rules. Each rule can be 1/0, regular
+    expression or a callback. Values longer than 1 char are treated as
+    regexps. Callback is called with the following arguments: this object,
+    tag name, attribute name and attribute value, should return empty list
+    to drop attribute, undef to keep it without value or a new scalar
+    value.
 
-  default
+ default
+
         print "default is ", $p->default();
         $p->default(1);      # allow tags by default
         $p->default(
@@ -106,7 +120,8 @@ METHODS
             }
         );
 
-  scrub_file
+ scrub_file
+
         $html = $scrubber->scrub_file('foo.html');   ## returns giant string
         die "Eeek $!" unless defined $html;  ## opening foo.html may have failed
         $scrubber->scrub_file('foo.html', 'new.html') or die "Eeek $!";
@@ -114,24 +129,26 @@ METHODS
             or die "Eeek $!"
                 if fileno STDOUT;
 
-  scrub
+ scrub
+
         print $scrubber->scrub($html);  ## returns giant string
         $scrubber->scrub($html, 'new.html') or die "Eeek $!";
         $scrubber->scrub($html', *STDOUT)
             or die "Eeek $!"
                 if fileno STDOUT;
 
-    *default* handler, used by both _scrub and _scrub_fh Moved all the
-    common code (basically all of it) into a single routine for ease of
+    default handler, used by both _scrub and _scrub_fh Moved all the common
+    code (basically all of it) into a single routine for ease of
     maintenance
 
-    *default* handler, does the scrubbing if we're scrubbing out to a file.
+    default handler, does the scrubbing if we're scrubbing out to a file.
     Now calls _scrub_str and pushes that out to a file.
 
-    *default* handler, does the scrubbing if we're returning a giant string.
+    default handler, does the scrubbing if we're returning a giant string.
     Now calls _scrub_str and appends that to the output string.
 
 How does it work?
+
     When a tag is encountered, HTML::Scrubber allows/denies the tag using
     the explicit rule if one exists.
 
@@ -140,33 +157,35 @@ How does it work?
     If an explicit rule exists, but it's a simple rule(1), the default
     attribute rule is applied.
 
-  EXAMPLE
+ EXAMPLE
+
         #!/usr/bin/perl -w
         use HTML::Scrubber;
         use strict;
-
+    
         my @allow = qw[ br hr b a ];
-
+    
         my @rules = (
             script => 0,
-            img => {
-                src => qr{^(?!http://)}i, # only relative image links allowed
-                alt => 1,                 # alt attribute allowed
-                '*' => 0,                 # deny all other attributes
+            img    => {
+                src => qr{^(?!http://)}i,    # only relative image links allowed
+                alt => 1,                    # alt attribute allowed
+                '*' => 0,                    # deny all other attributes
             },
         );
-
+    
         my @default = (
-            0   =>    # default rule, deny all tags
-            {
-                '*'           => 1, # default rule, allow all attributes
-                'href'        => qr{^(?:http|https|ftp)://}i,
-                'src'         => qr{^(?:http|https|ftp)://}i,
-        #   If your perl doesn't have qr
-        #   just use a string with length greater than 1
+            0 =>                             # default rule, deny all tags
+                {
+                '*'    => 1,                             # default rule, allow all attributes
+                'href' => qr{^(?:http|https|ftp)://}i,
+                'src'  => qr{^(?:http|https|ftp)://}i,
+    
+                #   If your perl doesn't have qr
+                #   just use a string with length greater than 1
                 'cite'        => '(?i-xsm:^(?:http|https|ftp):)',
                 'language'    => 0,
-                'name'        => 1, # could be sneaky, but hey ;)
+                'name'        => 1,                                 # could be sneaky, but hey ;)
                 'onblur'      => 0,
                 'onchange'    => 0,
                 'onclick'     => 0,
@@ -188,15 +207,15 @@ How does it work?
                 'onunload'    => 0,
                 'src'         => 0,
                 'type'        => 0,
-            }
+                }
         );
-
+    
         my $scrubber = HTML::Scrubber->new();
-        $scrubber->allow( @allow );
-        $scrubber->rules( @rules ); # key/value pairs
-        $scrubber->default( @default );
-        $scrubber->comment(1); # 1 allow, 0 deny
-
+        $scrubber->allow(@allow);
+        $scrubber->rules(@rules);    # key/value pairs
+        $scrubber->default(@default);
+        $scrubber->comment(1);       # 1 allow, 0 deny
+    
         ## preferred way to create the same object
         $scrubber = HTML::Scrubber->new(
             allow   => \@allow,
@@ -205,9 +224,9 @@ How does it work?
             comment => 1,
             process => 0,
         );
-
-        require Data::Dumper,die Data::Dumper::Dumper($scrubber) if @ARGV;
-
+    
+        require Data::Dumper, die Data::Dumper::Dumper($scrubber) if @ARGV;
+    
         my $it = q[
             <?php   echo(" EVIL EVIL EVIL "); ?>    <!-- asdf -->
             <hr>
@@ -221,23 +240,15 @@ How does it work?
                 </A>
             </A> <br>
         ];
-
-        print "#original text",$/, $it, $/;
+    
+        print "#original text", $/, $it, $/;
         print
-            "#scrubbed text (default ",
-            $scrubber->default(), # no arguments returns the current value
-            " comment ",
-            $scrubber->comment(),
-            " process ",
-            $scrubber->process(),
-            " )",
-            $/,
-            $scrubber->scrub($it),
-            $/;
-
-        $scrubber->default(1); # allow all tags by default
-        $scrubber->comment(0); # deny comments
-
+            "#scrubbed text (default ", $scrubber->default(),    # no arguments returns the current value
+            " comment ", $scrubber->comment(), " process ", $scrubber->process(), " )", $/, $scrubber->scrub($it), $/;
+    
+        $scrubber->default(1);                                   # allow all tags by default
+        $scrubber->comment(0);                                   # deny comments
+    
         print
             "#scrubbed text (default ",
             $scrubber->default(),
@@ -245,16 +256,15 @@ How does it work?
             $scrubber->comment(),
             " process ",
             $scrubber->process(),
-            " )",
-            $/,
+            " )", $/,
             $scrubber->scrub($it),
             $/;
-
-        $scrubber->process(1);        # allow process instructions (dangerous)
-        $default[0] = 1;              # allow all tags by default
-        $default[1]->{'*'} = 0;       # deny all attributes by default
-        $scrubber->default(@default); # set the default again
-
+    
+        $scrubber->process(1);    # allow process instructions (dangerous)
+        $default[0] = 1;          # allow all tags by default
+        $default[1]->{'*'} = 0;   # deny all attributes by default
+        $scrubber->default(@default);    # set the default again
+    
         print
             "#scrubbed text (default ",
             $scrubber->default(),
@@ -262,46 +272,68 @@ How does it work?
             $scrubber->comment(),
             " process ",
             $scrubber->process(),
-            " )",
-            $/,
+            " )", $/,
             $scrubber->scrub($it),
             $/;
 
-  FUN
+ FUN
+
     If you have Test::Inline (and you've installed HTML::Scrubber), try
 
         pod2test Scrubber.pm >scrubber.t
         perl scrubber.t
 
 SEE ALSO
-    HTML::Parser, Test::Inline, HTML::Sanitizer.
+
+    HTML::Parser, Test::Inline.
+
+    The HTML::Sanitizer module is no longer available on CPAN.
+
+CONTRIBUTING
+
+    If you want to contribute to the development of this module, the code
+    is on GitHub <http://github.com/nigelm/html-scrubber>. You'll need a
+    perl environment with Dist::Zilla, and if you're just getting started,
+    there's some documentation on using Vagrant and Perlbrew here
+    <http://mrcaron.github.io/2015/03/06/Perl-CPAN-Pull-Request.html>.
+
+    There is now a .perltidyrc and a <.tidyallrc> file within the
+    respository for the standard perltidy settings used - I will apply
+    these before new releases. Please do not let formatting prevent you
+    from sending in patches etc - this can be sorted out as part of the
+    release process. Info on tidyall can be found at
+    https://metacpan.org/pod/distribution/Code-TidyAll/bin/tidyall.
 
 INSTALLATION
+
     See perlmodinstall for information and options on installing Perl
     modules.
 
 BUGS AND LIMITATIONS
+
     You can make new bug reports, and view existing ones, through the web
     interface at
-    <http://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Scrubber>.
+    http://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Scrubber.
 
 AVAILABILITY
-    The project homepage is <https://metacpan.org/release/HTML-Scrubber>.
+
+    The project homepage is https://metacpan.org/release/HTML-Scrubber.
 
     The latest version of this module is available from the Comprehensive
-    Perl Archive Network (CPAN). Visit <http://www.perl.com/CPAN/> to find a
-    CPAN site near you, or see
-    <https://metacpan.org/module/HTML::Scrubber/>.
+    Perl Archive Network (CPAN). Visit http://www.perl.com/CPAN/ to find a
+    CPAN site near you, or see https://metacpan.org/module/HTML::Scrubber/.
 
 AUTHORS
-    *   Ruslan Zakirov <Ruslan.Zakirov@gmail.com>
 
-    *   Nigel Metheringham <nigelm@cpan.org>
+      * Ruslan Zakirov <Ruslan.Zakirov@gmail.com>
 
-    *   D. H. <podmaster@cpan.org>
+      * Nigel Metheringham <nigelm@cpan.org>
+
+      * D. H. <podmaster@cpan.org>
 
 COPYRIGHT AND LICENSE
-    This software is copyright (c) 2013 by Ruslan Zakirov, Nigel
+
+    This software is copyright (c) 2015 by Ruslan Zakirov, Nigel
     Metheringham, 2003-2004 D. H..
 
     This is free software; you can redistribute it and/or modify it under

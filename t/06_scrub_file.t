@@ -17,7 +17,7 @@ my $tmpdir = tempdir( CLEANUP => 1 );
 SKIP: {
     skip "no writable temporary directory found", 6
         unless length $tmpdir
-            and -d $tmpdir;
+        and -d $tmpdir;
 
     my $template = 'html-scrubber-XXXX';
     my ( $tfh, $tmpfile ) = tempfile( $template, DIR => $tmpdir, SUFFIX => '.html' );

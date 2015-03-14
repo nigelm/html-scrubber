@@ -7,54 +7,56 @@ use strict;
 use warnings;
 use HTML::Parser 3.47 ();
 use HTML::Entities;
-our( @_scrub, @_scrub_fh );
+use Scalar::Util ('weaken');
 
-our $VERSION = '0.11'; # VERSION
+our ( @_scrub, @_scrub_fh );
+
+our $VERSION = '0.12'; # TRIAL VERSION
 our $AUTHORITY = 'cpan:NIGELM'; # AUTHORITY
 
 # my my my my, these here to prevent foolishness like
 # http://perlmonks.org/index.pl?node_id=251127#Stealing+Lexicals
-(@_scrub    )= ( \&_scrub, "self, event, tagname, attr, attrseq, text");
-(@_scrub_fh )= ( \&_scrub_fh, "self, event, tagname, attr, attrseq, text");
+(@_scrub)    = ( \&_scrub,    "self, event, tagname, attr, attrseq, text" );
+(@_scrub_fh) = ( \&_scrub_fh, "self, event, tagname, attr, attrseq, text" );
 
 sub new {
     my $package = shift;
-    my $p = HTML::Parser->new(
-        api_version     => 3,
-        default_h       => \@_scrub,
-        marked_sections => 0,
-        strict_comment  => 0,
-        unbroken_text   => 1,
-        case_sensitive  => 0,
+    my $p       = HTML::Parser->new(
+        api_version             => 3,
+        default_h               => \@_scrub,
+        marked_sections         => 0,
+        strict_comment          => 0,
+        unbroken_text           => 1,
+        case_sensitive          => 0,
         boolean_attribute_value => undef,
-        empty_element_tags => 1,
+        empty_element_tags      => 1,
     );
 
     my $self = {
-        _p => $p,
-        _rules => {
-            '*' => 0,
-        },
-        _comment => 0,
-        _process => 0,
-        _r => "",
+        _p        => $p,
+        _rules    => { '*' => 0, },
+        _comment  => 0,
+        _process  => 0,
+        _r        => "",
         _optimize => 1,
-        _script => 0,
-        _style  => 0,
+        _script   => 0,
+        _style    => 0,
     };
 
     $p->{"\0_s"} = bless $self, $package;
+    weaken( $p->{"\0_s"} );
 
     return $self unless @_;
 
-    my(%args)= @_;
+    my (%args) = @_;
 
-    for my $f( qw[ default allow deny rules process comment ] ) {
+    for my $f (qw[ default allow deny rules process comment ]) {
         next unless exists $args{$f};
-        if( ref $args{$f} ) {
-            $self->$f( @{ $args{$f} } ) ;
-        } else {
-            $self->$f( $args{$f} ) ;
+        if ( ref $args{$f} ) {
+            $self->$f( @{ $args{$f} } );
+        }
+        else {
+            $self->$f( $args{$f} );
         }
     }
 
@@ -63,38 +65,32 @@ sub new {
 
 
 sub comment {
-    return
-        $_[0]->{_comment}
-            if @_ == 1;
+    return $_[0]->{_comment}
+        if @_ == 1;
     $_[0]->{_comment} = $_[1];
     return;
 }
 
 
-
 sub process {
-    return
-        $_[0]->{_process}
-            if @_ == 1;
+    return $_[0]->{_process}
+        if @_ == 1;
     $_[0]->{_process} = $_[1];
     return;
 }
 
 
-
 sub script {
-    return
-        $_[0]->{_script}
-            if @_ == 1;
+    return $_[0]->{_script}
+        if @_ == 1;
     $_[0]->{_script} = $_[1];
     return;
 }
 
 
 sub style {
-    return
-        $_[0]->{_style}
-            if @_ == 1;
+    return $_[0]->{_style}
+        if @_ == 1;
     $_[0]->{_style} = $_[1];
     return;
 }
@@ -102,65 +98,64 @@ sub style {
 
 sub allow {
     my $self = shift;
-    for my $k(@_){
-        $self->{_rules}{lc $k}=1;
+    for my $k (@_) {
+        $self->{_rules}{ lc $k } = 1;
     }
-    $self->{_optimize} = 1; # each time a rule changes, reoptimize when parse
+    $self->{_optimize} = 1;    # each time a rule changes, reoptimize when parse
 
     return;
 }
-
 
 
 sub deny {
     my $self = shift;
 
-    for my $k(@_){
-        $self->{_rules}{lc $k} = 0;
+    for my $k (@_) {
+        $self->{_rules}{ lc $k } = 0;
     }
 
-    $self->{_optimize} = 1; # each time a rule changes, reoptimize when parse
+    $self->{_optimize} = 1;    # each time a rule changes, reoptimize when parse
 
     return;
 }
 
 
-sub rules{
+sub rules {
     my $self = shift;
-    my(%rules)= @_;
-    for my $k(keys %rules) {
-        $self->{_rules}{lc $k} = $rules{$k};
+    my (%rules) = @_;
+    for my $k ( keys %rules ) {
+        $self->{_rules}{ lc $k } = $rules{$k};
     }
 
-    $self->{_optimize} = 1; # each time a rule changes, reoptimize when parse
+    $self->{_optimize} = 1;    # each time a rule changes, reoptimize when parse
 
     return;
 }
 
 
 sub default {
-    return
-        $_[0]->{_rules}{'*'}
-            if @_ == 1;
+    return $_[0]->{_rules}{'*'}
+        if @_ == 1;
 
     $_[0]->{_rules}{'*'} = $_[1] if defined $_[1];
     $_[0]->{_rules}{'_'} = $_[2] if defined $_[2] and ref $_[2];
-    $_[0]->{_optimize} = 1; # each time a rule changes, reoptimize when parse
+    $_[0]->{_optimize} = 1;    # each time a rule changes, reoptimize when parse
 
     return;
 }
 
 
 sub scrub_file {
-    if(@_ > 2){
-        return unless defined $_[0]->_out($_[2]);
-    } else {
+    if ( @_ > 2 ) {
+        return unless defined $_[0]->_out( $_[2] );
+    }
+    else {
         $_[0]->{_p}->handler( default => @_scrub );
     }
 
-    $_[0]->_optimize() ;#if $_[0]->{_optimize};
+    $_[0]->_optimize();    #if $_[0]->{_optimize};
 
-    $_[0]->{_p}->parse_file($_[1]);
+    $_[0]->{_p}->parse_file( $_[1] );
 
     return delete $_[0]->{_r} unless exists $_[0]->{_out};
     print { $_[0]->{_out} } $_[0]->{_r} if length $_[0]->{_r};
@@ -170,15 +165,16 @@ sub scrub_file {
 
 
 sub scrub {
-    if(@_ > 2){
-        return unless defined $_[0]->_out($_[2]);
-    } else {
+    if ( @_ > 2 ) {
+        return unless defined $_[0]->_out( $_[2] );
+    }
+    else {
         $_[0]->{_p}->handler( default => @_scrub );
     }
 
-    $_[0]->_optimize();# if $_[0]->{_optimize};
+    $_[0]->_optimize();    # if $_[0]->{_optimize};
 
-    $_[0]->{_p}->parse($_[1]);
+    $_[0]->{_p}->parse( $_[1] ) if defined( $_[1] );
     $_[0]->{_p}->eof();
 
     return delete $_[0]->{_r} unless exists $_[0]->{_out};
@@ -187,15 +183,15 @@ sub scrub {
 }
 
 
-
 sub _out {
-    my($self, $o ) = @_;
+    my ( $self, $o ) = @_;
 
-    unless( ref $o and ref \$o ne 'GLOB') {
+    unless ( ref $o and ref \$o ne 'GLOB' ) {
         open my $F, '>', $o or return;
         binmode $F;
         $self->{_out} = $F;
-    } else {
+    }
+    else {
         $self->{_out} = $o;
     }
 
@@ -205,39 +201,37 @@ sub _out {
 }
 
 
-
 sub _validate {
-    my($s, $t, $r, $a, $as) = @_;
+    my ( $s, $t, $r, $a, $as ) = @_;
     return "<$t>" unless %$a;
 
     $r = $s->{_rules}->{$r};
     my %f;
 
-    for my $k( keys %$a ) {
-        my $check = exists $r->{$k}? $r->{$k} : exists $r->{'*'}? $r->{'*'} : next;
+    for my $k ( keys %$a ) {
+        my $check = exists $r->{$k} ? $r->{$k} : exists $r->{'*'} ? $r->{'*'} : next;
 
-        if( ref $check eq 'CODE' ) {
+        if ( ref $check eq 'CODE' ) {
             my @v = $check->( $s, $t, $k, $a->{$k}, $a, \%f );
             next unless @v;
             $f{$k} = shift @v;
-        } elsif( ref $check || length($check) > 1 ) {
+        }
+        elsif ( ref $check || length($check) > 1 ) {
             $f{$k} = $a->{$k} if $a->{$k} =~ m{$check};
-        } elsif( $check ) {
+        }
+        elsif ($check) {
             $f{$k} = $a->{$k};
         }
     }
 
-    if( %f ){
+    if (%f) {
         my %seen;
         return "<$t $r>"
-            if $r = join ' ',
-                    map {
-                        defined $f{$_}
-                        ? qq[$_="].encode_entities($f{$_}).q["]
-                        : $_; # boolean attribute (TODO?)
-                    } grep {
-                        exists $f{$_} and !$seen{$_}++;
-                    } @$as;
+            if $r = join ' ', map {
+            defined $f{$_}
+                ? qq[$_="] . encode_entities( $f{$_} ) . q["]
+                : $_;    # boolean attribute (TODO?)
+            } grep { exists $f{$_} and !$seen{$_}++; } @$as;
     }
 
     return "<$t>";
@@ -275,10 +269,11 @@ sub _scrub_str {
         elsif ( $s->{_rules}->{'*'} ) {
             $place = 1;
         }
-        if ( $place ) {
+        if ($place) {
             if ( length $text ) {
                 $outstr .= "</$t>";
-            } else {
+            }
+            else {
                 substr $s->{_r}, -1, 0, ' /';
             }
         }
@@ -304,7 +299,7 @@ sub _scrub_str {
 
 
 sub _scrub_fh {
-    my $self =  $_[0]->{"\0_s"};
+    my $self = $_[0]->{"\0_s"};
     print { $self->{_out} } $self->{'_r'} if length $self->{_r};
     $self->{'_r'} = _scrub_str(@_);
 }
@@ -316,54 +311,44 @@ sub _scrub {
 }
 
 sub _optimize {
-    my($self) = @_;
+    my ($self) = @_;
 
-    my( @ignore_elements ) = grep { not $self->{"_$_"} } qw(script style);
-    $self->{_p}->ignore_elements(@ignore_elements); # if @ is empty, we reset ;)
+    my (@ignore_elements) = grep { not $self->{"_$_"} } qw(script style);
+    $self->{_p}->ignore_elements(@ignore_elements);    # if @ is empty, we reset ;)
 
     return unless $self->{_optimize};
-#sub allow
-#    return unless $self->{_optimize}; # till I figure it out (huh)
 
-    if( $self->{_rules}{'*'} ){       # default allow
-        $self->{_p}->report_tags();   # so clear it
-    } else {
+    #sub allow
+    #    return unless $self->{_optimize}; # till I figure it out (huh)
 
-        my(@reports) =
-            grep {                # report only tags we want
-                $self->{_rules}{$_}
-            } keys %{
-                $self->{_rules}
-            };
+    if ( $self->{_rules}{'*'} ) {    # default allow
+        $self->{_p}->report_tags();    # so clear it
+    }
+    else {
 
-        $self->{_p}->report_tags( # default deny, so optimize
+        my (@reports) =
+            grep {                     # report only tags we want
+            $self->{_rules}{$_}
+            } keys %{ $self->{_rules} };
+
+        $self->{_p}->report_tags(      # default deny, so optimize
             @reports
         ) if @reports;
     }
 
-# sub deny
-#    return unless $self->{_optimize}; # till I figure it out (huh)
-    my(@ignores)=
-        grep {
-            not $self->{_rules}{$_}
-        } grep {
-            $_ ne '*'
-        } keys %{
-            $self->{_rules}
-        };
+    # sub deny
+    #    return unless $self->{_optimize}; # till I figure it out (huh)
+    my (@ignores) =
+        grep { not $self->{_rules}{$_} } grep { $_ ne '*' } keys %{ $self->{_rules} };
 
-    $self->{_p}->ignore_tags( # always ignore stuff we don't want
+    $self->{_p}->ignore_tags(    # always ignore stuff we don't want
         @ignores
     ) if @ignores;
 
-    $self->{_optimize}=0;
+    $self->{_optimize} = 0;
     return;
 }
 
-
-sub DESTROY {
-    delete $_[0]->{_p}->{"\0_s"}; # break circular reference
-}
 1;
 
 #print sprintf q[ '%-12s => %s,], "$_'", $h{$_} for sort keys %h;# perl!
@@ -383,7 +368,7 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing html
 
 =head1 VERSION
 
-version 0.11
+version 0.12
 
 =head1 SYNOPSIS
 
@@ -412,20 +397,20 @@ version 0.11
 
 =head1 DESCRIPTION
 
-If you want to "scrub" or "sanitize" html input in a reliable and
-flexible fashion, then this module is for you.
+If you want to "scrub" or "sanitize" html input in a reliable and flexible
+fashion, then this module is for you.
 
 I wasn't satisfied with HTML::Sanitizer because it is based on
-HTML::TreeBuilder, so I thought I'd write something similar that
-works directly with HTML::Parser.
+HTML::TreeBuilder, so I thought I'd write something similar that works directly
+with HTML::Parser.
 
 =head1 METHODS
 
-First a note on documentation: just study the L<EXAMPLE|"EXAMPLE"> below.
-It's all the documentation you could need
+First a note on documentation: just study the L<EXAMPLE|"EXAMPLE"> below. It's
+all the documentation you could need
 
-Also, be sure to read all the comments as well as
-L<How does it work?|"How does it work?">.
+Also, be sure to read all the comments as well as L<How does it work?|"How does
+it work?">.
 
 If you're new to perl, good luck to you.
 
@@ -445,10 +430,9 @@ If you're new to perl, good luck to you.
         if $p->script;      # off by default
     $p->script( 0 || 1 );
 
-B<**> Please note that this is implemented
-using HTML::Parser's ignore_elements function,
-so if C<script> is set to true,
-all script tags encountered will be validated like all other tags.
+B<**> Please note that this is implemented using HTML::Parser's ignore_elements
+function, so if C<script> is set to true, all script tags encountered will be
+validated like all other tags.
 
 =head2 style
 
@@ -456,10 +440,9 @@ all script tags encountered will be validated like all other tags.
         if $p->style;       # off by default
     $p->style( 0 || 1 );
 
-B<**> Please note that this is implemented
-using HTML::Parser's ignore_elements function,
-so if C<style> is set to true,
-all style tags encountered will be validated like all other tags.
+B<**> Please note that this is implemented using HTML::Parser's ignore_elements
+function, so if C<style> is set to true, all style tags encountered will be
+validated like all other tags.
 
 =head2 allow
 
@@ -484,11 +467,11 @@ all style tags encountered will be validated like all other tags.
         ...
     );
 
-Updates set of attribute rules. Each rule can be 1/0, regular expression
-or a callback. Values longer than 1 char are treated as regexps. Callback
-is called with the following arguments: this object, tag name, attribute
-name and attribute value, should return empty list to drop attribute,
-C<undef> to keep it without value or a new scalar value.
+Updates set of attribute rules. Each rule can be 1/0, regular expression or a
+callback. Values longer than 1 char are treated as regexps. Callback is called
+with the following arguments: this object, tag name, attribute name and
+attribute value, should return empty list to drop attribute, C<undef> to keep
+it without value or a new scalar value.
 
 =head2 default
 
@@ -528,30 +511,28 @@ Takes tag, rule('_' || $tag), attrref.
 
 =for comment _scrub_str
 
-I<default> handler, used by both _scrub and _scrub_fh
-Moved all the common code (basically all of it) into a single routine for
-ease of maintenance
+I<default> handler, used by both _scrub and _scrub_fh Moved all the common code
+(basically all of it) into a single routine for ease of maintenance
 
 =for comment _scrub_fh
 
-I<default> handler, does the scrubbing if we're scrubbing out to a file.
-Now calls _scrub_str and pushes that out to a file.
+I<default> handler, does the scrubbing if we're scrubbing out to a file. Now
+calls _scrub_str and pushes that out to a file.
 
 =for comment _scrub
 
-I<default> handler, does the scrubbing if we're returning a giant string.
-Now calls _scrub_str and appends that to the output string.
+I<default> handler, does the scrubbing if we're returning a giant string. Now
+calls _scrub_str and appends that to the output string.
 
 =head1 How does it work?
 
-When a tag is encountered, HTML::Scrubber
-allows/denies the tag using the explicit rule if one exists.
+When a tag is encountered, HTML::Scrubber allows/denies the tag using the
+explicit rule if one exists.
 
 If no explicit rule exists, Scrubber applies the default rule.
 
-If an explicit rule exists,
-but it's a simple rule(1),
-the default attribute rule is applied.
+If an explicit rule exists, but it's a simple rule(1), the default attribute
+rule is applied.
 
 =head2 EXAMPLE
 
@@ -565,24 +546,25 @@ the default attribute rule is applied.
 
     my @rules = (
         script => 0,
-        img => {
-            src => qr{^(?!http://)}i, # only relative image links allowed
-            alt => 1,                 # alt attribute allowed
-            '*' => 0,                 # deny all other attributes
+        img    => {
+            src => qr{^(?!http://)}i,    # only relative image links allowed
+            alt => 1,                    # alt attribute allowed
+            '*' => 0,                    # deny all other attributes
         },
     );
 
     my @default = (
-        0   =>    # default rule, deny all tags
-        {
-            '*'           => 1, # default rule, allow all attributes
-            'href'        => qr{^(?:http|https|ftp)://}i,
-            'src'         => qr{^(?:http|https|ftp)://}i,
-    #   If your perl doesn't have qr
-    #   just use a string with length greater than 1
+        0 =>                             # default rule, deny all tags
+            {
+            '*'    => 1,                             # default rule, allow all attributes
+            'href' => qr{^(?:http|https|ftp)://}i,
+            'src'  => qr{^(?:http|https|ftp)://}i,
+
+            #   If your perl doesn't have qr
+            #   just use a string with length greater than 1
             'cite'        => '(?i-xsm:^(?:http|https|ftp):)',
             'language'    => 0,
-            'name'        => 1, # could be sneaky, but hey ;)
+            'name'        => 1,                                 # could be sneaky, but hey ;)
             'onblur'      => 0,
             'onchange'    => 0,
             'onclick'     => 0,
@@ -604,14 +586,14 @@ the default attribute rule is applied.
             'onunload'    => 0,
             'src'         => 0,
             'type'        => 0,
-        }
+            }
     );
 
     my $scrubber = HTML::Scrubber->new();
-    $scrubber->allow( @allow );
-    $scrubber->rules( @rules ); # key/value pairs
-    $scrubber->default( @default );
-    $scrubber->comment(1); # 1 allow, 0 deny
+    $scrubber->allow(@allow);
+    $scrubber->rules(@rules);    # key/value pairs
+    $scrubber->default(@default);
+    $scrubber->comment(1);       # 1 allow, 0 deny
 
     ## preferred way to create the same object
     $scrubber = HTML::Scrubber->new(
@@ -622,7 +604,7 @@ the default attribute rule is applied.
         process => 0,
     );
 
-    require Data::Dumper,die Data::Dumper::Dumper($scrubber) if @ARGV;
+    require Data::Dumper, die Data::Dumper::Dumper($scrubber) if @ARGV;
 
     my $it = q[
         <?php   echo(" EVIL EVIL EVIL "); ?>    <!-- asdf -->
@@ -638,21 +620,13 @@ the default attribute rule is applied.
         </A> <br>
     ];
 
-    print "#original text",$/, $it, $/;
+    print "#original text", $/, $it, $/;
     print
-        "#scrubbed text (default ",
-        $scrubber->default(), # no arguments returns the current value
-        " comment ",
-        $scrubber->comment(),
-        " process ",
-        $scrubber->process(),
-        " )",
-        $/,
-        $scrubber->scrub($it),
-        $/;
+        "#scrubbed text (default ", $scrubber->default(),    # no arguments returns the current value
+        " comment ", $scrubber->comment(), " process ", $scrubber->process(), " )", $/, $scrubber->scrub($it), $/;
 
-    $scrubber->default(1); # allow all tags by default
-    $scrubber->comment(0); # deny comments
+    $scrubber->default(1);                                   # allow all tags by default
+    $scrubber->comment(0);                                   # deny comments
 
     print
         "#scrubbed text (default ",
@@ -661,15 +635,14 @@ the default attribute rule is applied.
         $scrubber->comment(),
         " process ",
         $scrubber->process(),
-        " )",
-        $/,
+        " )", $/,
         $scrubber->scrub($it),
         $/;
 
-    $scrubber->process(1);        # allow process instructions (dangerous)
-    $default[0] = 1;              # allow all tags by default
-    $default[1]->{'*'} = 0;       # deny all attributes by default
-    $scrubber->default(@default); # set the default again
+    $scrubber->process(1);    # allow process instructions (dangerous)
+    $default[0] = 1;          # allow all tags by default
+    $default[1]->{'*'} = 0;   # deny all attributes by default
+    $scrubber->default(@default);    # set the default again
 
     print
         "#scrubbed text (default ",
@@ -678,8 +651,7 @@ the default attribute rule is applied.
         $scrubber->comment(),
         " process ",
         $scrubber->process(),
-        " )",
-        $/,
+        " )", $/,
         $scrubber->scrub($it),
         $/;
 
@@ -694,7 +666,24 @@ If you have Test::Inline (and you've installed HTML::Scrubber), try
 
 =head1 SEE ALSO
 
-L<HTML::Parser>, L<Test::Inline>, L<HTML::Sanitizer>.
+L<HTML::Parser>, L<Test::Inline>.
+
+The C<HTML::Sanitizer> module is no longer available on CPAN.
+
+=head1 CONTRIBUTING
+
+If you want to contribute to the development of this module, the code is on
+L<GitHub|http://github.com/nigelm/html-scrubber>. You'll need a perl
+environment with L<Dist::Zilla>, and if you're just getting started, there's
+some documentation on using Vagrant and Perlbrew
+L<here|http://mrcaron.github.io/2015/03/06/Perl-CPAN-Pull-Request.html>.
+
+There is now a C<.perltidyrc> and a <.tidyallrc> file within the respository
+for the standard perltidy settings used - I will apply these before new
+releases.  Please do not let formatting prevent you from sending in patches etc
+- this can be sorted out as part of the release process.  Info on C<tidyall>
+can be found at
+L<https://metacpan.org/pod/distribution/Code-TidyAll/bin/tidyall>.
 
 =head1 INSTALLATION
 
@@ -733,7 +722,7 @@ D. H. <podmaster@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Ruslan Zakirov, Nigel Metheringham, 2003-2004 D. H..
+This software is copyright (c) 2015 by Ruslan Zakirov, Nigel Metheringham, 2003-2004 D. H..
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
