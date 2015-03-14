@@ -1,6 +1,8 @@
 Revision history for Perl extension HTML::Scrubber.
 
 {{$NEXT}}
+
+0.12      2015-03-14 18:25:06+00:00 Europe/London (TRIAL RELEASE)
     - Travis integration  (thanks to mrcaron)
     - Fix some packaging/dist-zilla issues (thanks to mrcaron)
 
