@@ -59,6 +59,8 @@ use strict;
 use warnings;
 use HTML::Parser 3.47 ();
 use HTML::Entities;
+use Scalar::Util ('weaken');
+
 our( @_scrub, @_scrub_fh );
 
 # VERSION
@@ -96,6 +98,7 @@ sub new {
     };
 
     $p->{"\0_s"} = bless $self, $package;
+    weaken($p->{"\0_s"});
 
     return $self unless @_;
 
@@ -542,9 +545,6 @@ sub _optimize {
 }
 
 
-sub DESTROY {
-    delete $_[0]->{_p}->{"\0_s"}; # break circular reference
-}
 1;
 
 #print sprintf q[ '%-12s => %s,], "$_'", $h{$_} for sort keys %h;# perl!
@@ -705,6 +705,8 @@ If you have Test::Inline (and you've installed HTML::Scrubber), try
 
 =head1 SEE ALSO
 
-L<HTML::Parser>, L<Test::Inline>, L<HTML::Sanitizer>.
+L<HTML::Parser>, L<Test::Inline>.
+
+The HTML::Sanitizer module is no longer available on CPAN.
 
 =cut
