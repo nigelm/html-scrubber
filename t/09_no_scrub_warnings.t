@@ -10,11 +10,11 @@ my $scrubber = HTML::Scrubber->new;
 # really one of the Test:: warnings would be better here
 # but lets keep this simple
 local $SIG{__WARN__} = sub {
-	fail( "warning raised by scrub: @_" );
+    fail("warning raised by scrub: @_");
 };
 
-ok( ! $scrubber->scrub );
-ok( ! $scrubber->scrub('') );
-ok( ! $scrubber->scrub('<html></html>') );
+ok( !$scrubber->scrub );
+ok( !$scrubber->scrub('') );
+ok( !$scrubber->scrub('<html></html>') );
 
 done_testing;
