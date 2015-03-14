@@ -689,4 +689,11 @@ environment with L<Dist::Zilla>, and if you're just getting started, there's
 some documentation on using Vagrant and Perlbrew
 L<here|http://mrcaron.github.io/2015/03/06/Perl-CPAN-Pull-Request.html>.
 
+There is now a C<.perltidyrc> and a <.tidyallrc> file within the respository
+for the standard perltidy settings used - I will apply these before new
+releases.  Please do not let formatting prevent you from sending in patches etc
+- this can be sorted out as part of the release process.  Info on C<tidyall>
+can be found at
+L<https://metacpan.org/pod/distribution/Code-TidyAll/bin/tidyall>.
+
 =cut
