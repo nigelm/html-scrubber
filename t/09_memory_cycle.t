@@ -6,4 +6,4 @@ use HTML::Scrubber;
 
 my $scrubber = HTML::Scrubber->new();
 
-memory_cycle_ok($scrubber, "Scrubber has no cycles");
+memory_cycle_ok( $scrubber, "Scrubber has no cycles" );

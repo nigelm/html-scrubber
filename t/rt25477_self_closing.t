@@ -18,7 +18,7 @@ my $scrubbed = $scrubber->scrub( <<'END' );
 <b>two</b>
 END
 
-is($scrubbed, <<'END', "correct result");
+is( $scrubbed, <<'END', "correct result" );
 
 <b>one</b>
 
