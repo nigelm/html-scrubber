@@ -1,16 +1,38 @@
+# avoid version control files.
+.git
+
+# avoid temp and backup files.
+*~
+*#
+*.bak
+*.old
+*.rej
+*.swp
+*.tmp
+.DS_Store
+
+# avoid utility files
+.build
+_build
+
+# avoid compiled gettext files
+*.mo
+
+# avoid archives of this distribution
+HTML-Scrubber-*
+
+# stuff thats part of the build
 blib*
 Makefile
-Makefile.old
 Build
 Build.bat
 _build*
 pm_to_blib*
-*.tar.gz
-.lwpcookies
-cover_db
+META.yml
+tmp
+.tidyall.d
 pod2htm*.tmp
-HTML-Scrubber-*
-inc
-META.*
-*.bak
-.build
+
+# Carton packaging stuff
+local
+
