@@ -1,8 +1,12 @@
 Revision history for Perl extension HTML::Scrubber.
 
-0.12      2015-03-14 18:25:06+00:00 Europe/London (TRIAL RELEASE)
+0.13      2015-03-19 16:29:53+00:00 Europe/London (TRIAL RELEASE)
     - Travis integration  (thanks to mrcaron)
     - Fix some packaging/dist-zilla issues (thanks to mrcaron)
+    - check for definedness before calling ->parse (github #3 leejo)
+    - Removed the link to HTML::Sanitizer  (github #4 avereha)
+    - Removed circular reference (github #5 avereha)
+    - Fixed up dependancies from dzil bundles
 
 0.11      2013-10-11 15:11:59 Europe/London
     - Build/release changes only

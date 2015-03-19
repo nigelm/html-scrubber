@@ -22,7 +22,7 @@ build_requires:
 configure_requires:
   Module::Build: '0.28'
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 5.029, CPAN::Meta::Converter version 2.143240'
+generated_by: 'Dist::Zilla version 5.033, CPAN::Meta::Converter version 2.143240'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -31,7 +31,7 @@ name: HTML-Scrubber
 provides:
   HTML::Scrubber:
     file: lib/HTML/Scrubber.pm
-    version: '0.12'
+    version: '0.13'
 requires:
   HTML::Entities: '0'
   HTML::Parser: '3.47'
@@ -42,7 +42,7 @@ resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Scrubber
   homepage: https://metacpan.org/release/HTML-Scrubber
   repository: git://github.com/nigelm/html-scrubber.git
-version: '0.12'
+version: '0.13'
 x_Dist_Zilla:
   perl:
     version: '5.020001'
@@ -87,7 +87,7 @@ x_Dist_Zilla:
           prune_directory: []
           root: .
       name: '@NIGELM/GatherDir'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::Test::Compile
       config:
@@ -112,11 +112,11 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::MetaTests
       name: '@NIGELM/MetaTests'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::PodSyntaxTests
       name: '@NIGELM/PodSyntaxTests'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::Test::PodSpelling
       name: '@NIGELM/Test::PodSpelling'
@@ -166,7 +166,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::InlineFiles
       name: '@NIGELM/InlineFiles'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::ReportVersions
       name: '@NIGELM/ReportVersions'
@@ -174,23 +174,31 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::PruneCruft
       name: '@NIGELM/PruneCruft'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::PruneFiles
       name: '@NIGELM/PruneFiles'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::ManifestSkip
       name: '@NIGELM/ManifestSkip'
-      version: '5.029'
+      version: '5.033'
+    -
+      class: Dist::Zilla::Plugin::Prereqs
+      config:
+        Dist::Zilla::Plugin::Prereqs:
+          phase: build
+          type: requires
+      name: '@NIGELM/Prereqs'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::AutoPrereqs
       name: '@NIGELM/AutoPrereqs'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::MetaConfig
       name: '@NIGELM/MetaConfig'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::MetaProvides::Class
       config:
@@ -208,7 +216,7 @@ x_Dist_Zilla:
             -
               class: Dist::Zilla::Plugin::FinderCode
               name: '@NIGELM/MetaProvides::Package/AUTOVIV/:InstallModulesPM'
-              version: '5.029'
+              version: '5.033'
         Dist::Zilla::Role::MetaProvider::Provider:
           inherit_missing: '1'
           inherit_version: '1'
@@ -218,7 +226,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::MetaResources
       name: '@NIGELM/MetaResources'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::Authority
       name: '@NIGELM/Authority'
@@ -226,11 +234,11 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::ExtraTests
       name: '@NIGELM/ExtraTests'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::NextRelease
       name: '@NIGELM/NextRelease'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::OurPkgVersion
       name: '@NIGELM/OurPkgVersion'
@@ -322,22 +330,22 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::License
       name: '@NIGELM/License'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::ModuleBuild
       config:
         Dist::Zilla::Role::TestRunner:
           default_jobs: 1
       name: '@NIGELM/ModuleBuild'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::MetaYAML
       name: '@NIGELM/MetaYAML'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::MetaJSON
       name: '@NIGELM/MetaJSON'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::ReadmeAnyFromPod
       name: '@NIGELM/ReadmeTextInBuild'
@@ -353,7 +361,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::Manifest
       name: '@NIGELM/Manifest'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::Git::Commit
       config:
@@ -379,7 +387,7 @@ x_Dist_Zilla:
         Dist::Zilla::Plugin::Git::Tag:
           branch: ~
           signed: 0
-          tag: release/0.12-TRIAL
+          tag: release/0.13-TRIAL
           tag_format: release/%v%t
           tag_message: 'Release of %v%t'
           time_zone: local
@@ -419,54 +427,46 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::UploadToCPAN
       name: '@NIGELM/UploadToCPAN'
-      version: '5.029'
-    -
-      class: Dist::Zilla::Plugin::Prereqs
-      config:
-        Dist::Zilla::Plugin::Prereqs:
-          phase: test
-          type: requires
-      name: TestRequires
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::FinderCode
       name: ':InstallModules'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::FinderCode
       name: ':IncModules'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::FinderCode
       name: ':TestFiles'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::FinderCode
       name: ':ExecFiles'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::FinderCode
       name: ':ShareFiles'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::FinderCode
       name: ':MainModule'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::FinderCode
       name: ':AllFiles'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::FinderCode
       name: ':NoFiles'
-      version: '5.029'
+      version: '5.033'
     -
       class: Dist::Zilla::Plugin::FinderCode
       name: '@NIGELM/MetaProvides::Package/AUTOVIV/:InstallModulesPM'
-      version: '5.029'
+      version: '5.033'
   zilla:
     class: Dist::Zilla::Dist::Builder
     config:
       is_trial: '1'
-    version: '5.029'
+    version: '5.033'
 x_authority: cpan:NIGELM

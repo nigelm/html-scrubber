@@ -11,7 +11,7 @@ use Scalar::Util ('weaken');
 
 our ( @_scrub, @_scrub_fh );
 
-our $VERSION = '0.12'; # TRIAL VERSION
+our $VERSION = '0.13'; # TRIAL VERSION
 our $AUTHORITY = 'cpan:NIGELM'; # AUTHORITY
 
 # my my my my, these here to prevent foolishness like
@@ -368,7 +368,7 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing html
 
 =head1 VERSION
 
-version 0.12
+version 0.13
 
 =head1 SYNOPSIS
 
