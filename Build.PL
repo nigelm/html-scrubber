@@ -23,7 +23,7 @@ my %module_build_args = (
     "D. H. <podmaster\@cpan.org>"
   ],
   "dist_name" => "HTML-Scrubber",
-  "dist_version" => "0.13",
+  "dist_version" => "0.14",
   "license" => "perl",
   "module_name" => "HTML::Scrubber",
   "recommends" => {},
@@ -32,6 +32,7 @@ my %module_build_args = (
     "HTML::Entities" => 0,
     "HTML::Parser" => "3.47",
     "Scalar::Util" => 0,
+    "perl" => "5.008",
     "strict" => 0,
     "warnings" => 0
   },
@@ -45,7 +46,6 @@ my %module_build_args = (
     "Test" => 0,
     "Test::Memory::Cycle" => 0,
     "Test::More" => "0.94",
-    "perl" => "5.006",
     "utf8" => 0
   }
 );
@@ -64,7 +64,6 @@ my %fallback_build_requires = (
   "Test::Memory::Cycle" => 0,
   "Test::More" => "0.94",
   "Test::NoTabs" => 0,
-  "perl" => "5.006",
   "utf8" => 0
 );
 

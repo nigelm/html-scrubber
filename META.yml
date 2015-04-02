@@ -17,7 +17,6 @@ build_requires:
   Test::Memory::Cycle: '0'
   Test::More: '0.94'
   Test::NoTabs: '0'
-  perl: '5.006'
   utf8: '0'
 configure_requires:
   Module::Build: '0.28'
@@ -31,18 +30,19 @@ name: HTML-Scrubber
 provides:
   HTML::Scrubber:
     file: lib/HTML/Scrubber.pm
-    version: '0.13'
+    version: '0.14'
 requires:
   HTML::Entities: '0'
   HTML::Parser: '3.47'
   Scalar::Util: '0'
+  perl: '5.008'
   strict: '0'
   warnings: '0'
 resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Scrubber
   homepage: https://metacpan.org/release/HTML-Scrubber
   repository: git://github.com/nigelm/html-scrubber.git
-version: '0.13'
+version: '0.14'
 x_Dist_Zilla:
   perl:
     version: '5.020001'
@@ -387,7 +387,7 @@ x_Dist_Zilla:
         Dist::Zilla::Plugin::Git::Tag:
           branch: ~
           signed: 0
-          tag: release/0.13-TRIAL
+          tag: release/0.14
           tag_format: release/%v%t
           tag_message: 'Release of %v%t'
           time_zone: local
@@ -467,6 +467,6 @@ x_Dist_Zilla:
   zilla:
     class: Dist::Zilla::Dist::Builder
     config:
-      is_trial: '1'
+      is_trial: '0'
     version: '5.033'
 x_authority: cpan:NIGELM

@@ -45,6 +45,7 @@
             "HTML::Entities" : "0",
             "HTML::Parser" : "3.47",
             "Scalar::Util" : "0",
+            "perl" : "5.008",
             "strict" : "0",
             "warnings" : "0"
          }
@@ -59,7 +60,6 @@
             "Test" : "0",
             "Test::Memory::Cycle" : "0",
             "Test::More" : "0.94",
-            "perl" : "5.006",
             "utf8" : "0"
          }
       }
@@ -67,10 +67,10 @@
    "provides" : {
       "HTML::Scrubber" : {
          "file" : "lib/HTML/Scrubber.pm",
-         "version" : "0.13"
+         "version" : "0.14"
       }
    },
-   "release_status" : "testing",
+   "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
          "mailto" : "bug-HTML-Scrubber@rt.cpan.org",
@@ -83,7 +83,7 @@
          "web" : "http://github.com/nigelm/html-scrubber"
       }
    },
-   "version" : "0.13",
+   "version" : "0.14",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.020001"
@@ -528,7 +528,7 @@
                "Dist::Zilla::Plugin::Git::Tag" : {
                   "branch" : null,
                   "signed" : 0,
-                  "tag" : "release/0.13-TRIAL",
+                  "tag" : "release/0.14",
                   "tag_format" : "release/%v%t",
                   "tag_message" : "Release of %v%t",
                   "time_zone" : "local"
@@ -633,7 +633,7 @@
       "zilla" : {
          "class" : "Dist::Zilla::Dist::Builder",
          "config" : {
-            "is_trial" : "1"
+            "is_trial" : "0"
          },
          "version" : "5.033"
       }
