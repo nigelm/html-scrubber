@@ -17,11 +17,7 @@ install:
   - cpanm --quiet --notest --skip-satisfied Dist::Zilla
   
   - cpanm --quiet --notest --skip-satisfied Pod::Markdown
-  
-  - cpanm --quiet --notest --skip-satisfied Test::EOL
-  
-  - cpanm --quiet --notest --skip-satisfied Test::NoTabs
-  
+    
   - dzil authordeps | grep -vP '[^\w:]' | xargs -n 5 -P 10 cpanm --quiet --notest --skip-satisfied
 
   - export RELEASE_TESTING=1 AUTOMATED_TESTING=1 AUTHOR_TESTING=1 HARNESS_OPTIONS=j10:c HARNESS_TIMER=1

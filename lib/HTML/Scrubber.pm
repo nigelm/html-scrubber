@@ -55,6 +55,7 @@ If you're new to perl, good luck to you.
 
 =cut
 
+use 5.008;    # enforce minimum perl version of 5.8
 use strict;
 use warnings;
 use HTML::Parser 3.47 ();
@@ -680,6 +681,20 @@ If you have Test::Inline (and you've installed HTML::Scrubber), try
 L<HTML::Parser>, L<Test::Inline>.
 
 The C<HTML::Sanitizer> module is no longer available on CPAN.
+
+=head1 VERSION REQUIREMENTS
+
+As of version 0.14 I have added a perl minimum version requirement of 5.8. This
+is basically due to failures on the smokers perl 5.6 installations - which
+appears to be down to installation mechanisms and requirements.
+
+Since I don't want to spend the time supporting a version that is so old (and
+may not work for reasons on UTF support etc), I have added a C<use 5.008;> to
+the main module.
+
+If this is problematic I am very willing to accept patches to fix this up,
+although I do not personally see a good reason to support a release that has
+been obsolete for 13 years.
 
 =head1 CONTRIBUTING
 
