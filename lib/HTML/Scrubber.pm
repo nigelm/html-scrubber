@@ -4,7 +4,7 @@ package HTML::Scrubber;
 
 =begin :prelude
 
-=for stopwords html cpan callback homepage
+=for stopwords html cpan callback homepage Perlbrew perltidy respository
 
 =end :prelude
 
