@@ -9,7 +9,7 @@ BEGIN {
 use strict;
 use warnings;
 
-# this test was generated with Dist::Zilla::Plugin::Test::NoTabs 0.09
+# this test was generated with Dist::Zilla::Plugin::Test::NoTabs 0.15
 
 use Test::More 0.88;
 use Test::NoTabs;
@@ -28,6 +28,7 @@ my @files = (
     't/08_cb_attrs.t',
     't/09_memory_cycle.t',
     't/09_no_scrub_warnings.t',
+    't/jvn53973084.t',
     't/rt19063_xhtml.t',
     't/rt25477_self_closing.t',
     't/rt72659_utf8.t',

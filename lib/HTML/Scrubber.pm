@@ -12,7 +12,7 @@ use Scalar::Util ('weaken');
 
 our ( @_scrub, @_scrub_fh );
 
-our $VERSION = '0.14'; # VERSION
+our $VERSION = '0.15'; # VERSION
 our $AUTHORITY = 'cpan:NIGELM'; # AUTHORITY
 
 # my my my my, these here to prevent foolishness like
@@ -280,7 +280,11 @@ sub _scrub_str {
         }
     }
     elsif ( $e eq 'comment' ) {
-        $outstr .= $text if $s->{_comment};
+        if ( $s->{_comment} ) {
+
+            # only copy comments through if they are well formed...
+            $outstr .= $text if ( $text =~ m|^<!--.*-->$|ms );
+        }
     }
     elsif ( $e eq 'process' ) {
         $outstr .= $text if $s->{_process};
@@ -361,7 +365,7 @@ __END__
 
 =pod
 
-=for stopwords html cpan callback homepage
+=for stopwords html cpan callback homepage Perlbrew perltidy respository
 
 =head1 NAME
 
@@ -369,7 +373,7 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing html
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =head1 SYNOPSIS
 
