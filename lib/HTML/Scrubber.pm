@@ -446,7 +446,11 @@ sub _scrub_str {
         }
     }
     elsif ( $e eq 'comment' ) {
-        $outstr .= $text if $s->{_comment};
+        if ( $s->{_comment} ) {
+
+            # only copy comments through if they are well formed...
+            $outstr .= $text if ( $text =~ m|^<!--.*-->$|ms );
+        }
     }
     elsif ( $e eq 'process' ) {
         $outstr .= $text if $s->{_process};
