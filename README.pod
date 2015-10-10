@@ -1,6 +1,6 @@
 =pod
 
-=for stopwords html cpan callback homepage
+=for stopwords html cpan callback homepage Perlbrew perltidy respository
 
 =head1 NAME
 
@@ -8,7 +8,7 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing html
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =head1 SYNOPSIS
 
