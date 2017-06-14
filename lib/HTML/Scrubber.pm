@@ -46,7 +46,7 @@ with C<HTML::Parser>.
 =head1 METHODS
 
 First a note on documentation: just study the L<EXAMPLE|"EXAMPLE"> below. It's
-all the documentation you could need
+all the documentation you could need.
 
 Also, be sure to read all the comments as well as L<How does it work?|"How does
 it work?">.
@@ -231,11 +231,11 @@ sub deny {
         ...
     );
 
-Updates set of attribute rules. Each rule can be 1/0, regular expression or a
-callback. Values longer than 1 char are treated as regexps. Callback is called
-with the following arguments: this object, tag name, attribute name and
-attribute value, should return empty list to drop attribute, C<undef> to keep
-it without value or a new scalar value.
+Updates a set of attribute rules. Each rule can be 1/0, a regular expression or a
+callback. Values longer than 1 char are treated as regexps. The callback is called
+with the following arguments: the current object, tag name, attribute name, and
+attribute value; the callback should return an empty list to drop the attribute,
+C<undef> to keep it without a value, or a new scalar value.
 
 =cut
 
@@ -546,7 +546,7 @@ explicit rule if one exists.
 
 If no explicit rule exists, Scrubber applies the default rule.
 
-If an explicit rule exists, but it's a simple rule(1), the default attribute
+If an explicit rule exists, but it's a simple rule(1), then the default attribute
 rule is applied.
 
 =head2 EXAMPLE
