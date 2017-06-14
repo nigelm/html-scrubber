@@ -39,9 +39,9 @@ package HTML::Scrubber;
 If you want to "scrub" or "sanitize" html input in a reliable and flexible
 fashion, then this module is for you.
 
-I wasn't satisfied with HTML::Sanitizer because it is based on
-HTML::TreeBuilder, so I thought I'd write something similar that works directly
-with HTML::Parser.
+I wasn't satisfied with C<HTML::Sanitizer> because it is based on
+C<HTML::TreeBuilder>, so I thought I'd write something similar that works directly
+with C<HTML::Parser>.
 
 =head1 METHODS
 
@@ -150,7 +150,7 @@ sub process {
         if $p->script;      # off by default
     $p->script( 0 || 1 );
 
-B<**> Please note that this is implemented using HTML::Parser's ignore_elements
+B<**> Please note that this is implemented using C<HTML::Parser>'s C<ignore_elements>
 function, so if C<script> is set to true, all script tags encountered will be
 validated like all other tags.
 
@@ -169,7 +169,7 @@ sub script {
         if $p->style;       # off by default
     $p->style( 0 || 1 );
 
-B<**> Please note that this is implemented using HTML::Parser's ignore_elements
+B<**> Please note that this is implemented using C<HTML::Parser>'s C<ignore_elements>
 function, so if C<style> is set to true, all style tags encountered will be
 validated like all other tags.
 
@@ -400,8 +400,8 @@ sub _validate {
 
 =for comment _scrub_str
 
-I<default> handler, used by both _scrub and _scrub_fh Moved all the common code
-(basically all of it) into a single routine for ease of maintenance
+I<default> handler, used by both C<_scrub> and C<_scrub_fh>. Moved all the
+common code (basically all of it) into a single routine for ease of maintenance.
 
 =cut
 
@@ -471,7 +471,7 @@ sub _scrub_str {
 =for comment _scrub_fh
 
 I<default> handler, does the scrubbing if we're scrubbing out to a file. Now
-calls _scrub_str and pushes that out to a file.
+calls C<_scrub_str> and pushes that out to a file.
 
 =cut
 
@@ -484,7 +484,7 @@ sub _scrub_fh {
 =for comment _scrub
 
 I<default> handler, does the scrubbing if we're returning a giant string. Now
-calls _scrub_str and appends that to the output string.
+calls C<_scrub_str> and appends that to the output string.
 
 =cut
 
@@ -541,7 +541,7 @@ sub _optimize {
 
 =head1 How does it work?
 
-When a tag is encountered, HTML::Scrubber allows/denies the tag using the
+When a tag is encountered, C<HTML::Scrubber> allows/denies the tag using the
 explicit rule if one exists.
 
 If no explicit rule exists, Scrubber applies the default rule.
@@ -675,7 +675,7 @@ rule is applied.
 
 =head2 FUN
 
-If you have Test::Inline (and you've installed HTML::Scrubber), try
+If you have C<Test::Inline> (and you've installed C<HTML::Scrubber>), try
 
     pod2test Scrubber.pm >scrubber.t
     perl scrubber.t
@@ -708,7 +708,7 @@ environment with L<Dist::Zilla>, and if you're just getting started, there's
 some documentation on using Vagrant and Perlbrew
 L<here|http://mrcaron.github.io/2015/03/06/Perl-CPAN-Pull-Request.html>.
 
-There is now a C<.perltidyrc> and a <.tidyallrc> file within the respository
+There is now a C<.perltidyrc> and a C<.tidyallrc> file within the respository
 for the standard perltidy settings used - I will apply these before new
 releases.  Please do not let formatting prevent you from sending in patches etc
 - this can be sorted out as part of the release process.  Info on C<tidyall>
