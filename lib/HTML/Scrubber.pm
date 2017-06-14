@@ -456,7 +456,7 @@ sub _scrub_str {
         $outstr .= $text if $s->{_process};
     }
     elsif ( $e eq 'text' or $e eq 'default' ) {
-        $text =~ s/</&lt;/g;    #https://rt.cpan.org/Ticket/Attachment/8716/10332/scrubber.patch
+        $text =~ s/</&lt;/g;    #https://rt.cpan.org/Public/Ticket/Attachment/83958/10332/scrubber.patch
         $text =~ s/>/&gt;/g;
 
         $outstr .= $text;
