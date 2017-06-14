@@ -26,7 +26,7 @@ SKIP: {
     is( $r, 1, "scrub(\$html,\$tmpfile=$tmpfile)" );
 
     local *FILIS;
-    open FILIS, "+>$tmpfile" or die "can't write to $tmpfile";
+    open FILIS, "+>", $tmpfile or die "can't write to $tmpfile";
 
     $r = $s->scrub( $html, \*FILIS );
     $r = "Error: \$@=$@ \$!=$!" unless $r;
@@ -44,7 +44,7 @@ SKIP: {
 
     is( $r, 1, qq[scrub_file(\$tmpfile,"\$tmpfile2"=$tmpfile2)] );
 
-    open FILIS, "+>$tmpfile2" or die "can't write to $tmpfile";
+    open FILIS, "+>", $tmpfile2 or die "can't write to $tmpfile";
     $r = $s->scrub_file( $tmpfile, \*FILIS );
     $r = "Error: \$@=$@ \$!=$!" unless $r;
 
