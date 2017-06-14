@@ -4,7 +4,7 @@ package HTML::Scrubber;
 
 =begin :prelude
 
-=for stopwords html cpan callback homepage Perlbrew perltidy respository
+=for stopwords html cpan callback homepage Perlbrew perltidy repository
 
 =end :prelude
 
@@ -708,7 +708,7 @@ environment with L<Dist::Zilla>, and if you're just getting started, there's
 some documentation on using Vagrant and Perlbrew
 L<here|http://mrcaron.github.io/2015/03/06/Perl-CPAN-Pull-Request.html>.
 
-There is now a C<.perltidyrc> and a C<.tidyallrc> file within the respository
+There is now a C<.perltidyrc> and a C<.tidyallrc> file within the repository
 for the standard perltidy settings used - I will apply these before new
 releases.  Please do not let formatting prevent you from sending in patches etc
 - this can be sorted out as part of the release process.  Info on C<tidyall>
