@@ -1,6 +1,6 @@
 package HTML::Scrubber;
 
-# ABSTRACT: Perl extension for scrubbing/sanitizing html
+# ABSTRACT: Perl extension for scrubbing/sanitizing HTML
 
 =begin :prelude
 
