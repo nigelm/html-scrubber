@@ -36,10 +36,6 @@ package HTML::Scrubber;
 
 =head1 DESCRIPTION
 
-L<Master Build Results|https://travis-ci.org/nigelm/html-scrubber>
-
-=head1 DESCRIPTION
-
 If you want to "scrub" or "sanitize" html input in a reliable and flexible
 fashion, then this module is for you.
 
@@ -76,6 +72,32 @@ our ( @_scrub, @_scrub_fh );
 # http://perlmonks.org/index.pl?node_id=251127#Stealing+Lexicals
 (@_scrub)    = ( \&_scrub,    "self, event, tagname, attr, attrseq, text" );
 (@_scrub_fh) = ( \&_scrub_fh, "self, event, tagname, attr, attrseq, text" );
+
+=head2 new
+
+    my $scrubber = HTML::Scrubber->new( allow => [ qw[ p b i u hr br ] ] );
+
+Build a new L<HTML::Scrubber>.  The arguments are the initial values for the
+following directives:-
+
+=over 4
+
+=item * default
+
+=item * allow
+
+=item * deny
+
+=item * rules
+
+=item * process
+
+=item * comment
+
+=back
+
+
+=cut
 
 sub new {
     my $package = shift;
