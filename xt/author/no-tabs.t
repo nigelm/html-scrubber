@@ -1,11 +1,3 @@
-
-BEGIN {
-  unless ($ENV{AUTHOR_TESTING}) {
-    require Test::More;
-    Test::More::plan(skip_all => 'these tests are for testing by the author');
-  }
-}
-
 use strict;
 use warnings;
 
@@ -16,8 +8,8 @@ use Test::NoTabs;
 
 my @files = (
     'lib/HTML/Scrubber.pm',
-    't/00-compile.t',
-    't/000-report-versions.t',
+    't/00-report-prereqs.dd',
+    't/00-report-prereqs.t',
     't/01_use.t',
     't/02_basic.t',
     't/03_more.t',
@@ -29,6 +21,7 @@ my @files = (
     't/09_memory_cycle.t',
     't/09_no_scrub_warnings.t',
     't/jvn53973084.t',
+    't/rt120384_remove_false_tags.t',
     't/rt19063_xhtml.t',
     't/rt25477_self_closing.t',
     't/rt72659_utf8.t',
