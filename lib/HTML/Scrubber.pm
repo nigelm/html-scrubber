@@ -43,9 +43,9 @@ L<Master Build Results|https://travis-ci.org/nigelm/html-scrubber>
 If you want to "scrub" or "sanitize" html input in a reliable and flexible
 fashion, then this module is for you.
 
-I wasn't satisfied with C<HTML::Sanitizer> because it is based on
-C<HTML::TreeBuilder>, so I thought I'd write something similar that works directly
-with C<HTML::Parser>.
+I wasn't satisfied with L<HTML::Sanitizer> because it is based on
+L<HTML::TreeBuilder>, so I thought I'd write something similar that works
+directly with L<HTML::Parser>.
 
 =head1 METHODS
 
@@ -154,9 +154,9 @@ sub process {
         if $p->script;      # off by default
     $p->script( 0 || 1 );
 
-B<**> Please note that this is implemented using C<HTML::Parser>'s C<ignore_elements>
-function, so if C<script> is set to true, all script tags encountered will be
-validated like all other tags.
+B<**> Please note that this is implemented using L<HTML::Parser>'s
+C<ignore_elements> function, so if C<script> is set to true, all script tags
+encountered will be validated like all other tags.
 
 =cut
 
@@ -173,9 +173,9 @@ sub script {
         if $p->style;       # off by default
     $p->style( 0 || 1 );
 
-B<**> Please note that this is implemented using C<HTML::Parser>'s C<ignore_elements>
-function, so if C<style> is set to true, all style tags encountered will be
-validated like all other tags.
+B<**> Please note that this is implemented using L<HTML::Parser>'s
+C<ignore_elements> function, so if C<style> is set to true, all style tags
+encountered will be validated like all other tags.
 
 =cut
 
@@ -235,11 +235,11 @@ sub deny {
         ...
     );
 
-Updates a set of attribute rules. Each rule can be 1/0, a regular expression or a
-callback. Values longer than 1 char are treated as regexps. The callback is called
-with the following arguments: the current object, tag name, attribute name, and
-attribute value; the callback should return an empty list to drop the attribute,
-C<undef> to keep it without a value, or a new scalar value.
+Updates a set of attribute rules. Each rule can be 1/0, a regular expression or
+a callback. Values longer than 1 char are treated as regexps. The callback is
+called with the following arguments: the current object, tag name, attribute
+name, and attribute value; the callback should return an empty list to drop the
+attribute, C<undef> to keep it without a value, or a new scalar value.
 
 =cut
 
@@ -405,7 +405,8 @@ sub _validate {
 =for comment _scrub_str
 
 I<default> handler, used by both C<_scrub> and C<_scrub_fh>. Moved all the
-common code (basically all of it) into a single routine for ease of maintenance.
+common code (basically all of it) into a single routine for ease of
+maintenance.
 
 =cut
 
@@ -545,13 +546,13 @@ sub _optimize {
 
 =head1 How does it work?
 
-When a tag is encountered, C<HTML::Scrubber> allows/denies the tag using the
+When a tag is encountered, L<HTML::Scrubber> allows/denies the tag using the
 explicit rule if one exists.
 
 If no explicit rule exists, Scrubber applies the default rule.
 
-If an explicit rule exists, but it's a simple rule(1), then the default attribute
-rule is applied.
+If an explicit rule exists, but it's a simple rule(1), then the default
+attribute rule is applied.
 
 =head2 EXAMPLE
 
@@ -679,7 +680,7 @@ rule is applied.
 
 =head2 FUN
 
-If you have C<Test::Inline> (and you've installed C<HTML::Scrubber>), try
+If you have L<Test::Inline> (and you've installed L<HTML::Scrubber>), try
 
     pod2test Scrubber.pm >scrubber.t
     perl scrubber.t
@@ -688,7 +689,7 @@ If you have C<Test::Inline> (and you've installed C<HTML::Scrubber>), try
 
 L<HTML::Parser>, L<Test::Inline>.
 
-The C<HTML::Sanitizer> module is no longer available on CPAN.
+The L<HTML::Sanitizer> module is no longer available on CPAN.
 
 =head1 VERSION REQUIREMENTS
 
