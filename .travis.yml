@@ -28,7 +28,7 @@ install:
   - cpanm --quiet --notest --skip-satisfied Dist::Zilla
   - dzil authordeps --missing | cpanm --quiet --notest --skip-satisfied
   - dzil listdeps --author --develop --missing | cpanm --notest --skip-satisfied
-  - export RELEASE_TESTING=1 AUTOMATED_TESTING=1 AUTHOR_TESTING=1 HARNESS_OPTIONS=j10:c HARNESS_TIMER=1
+  - export HARNESS_OPTIONS=j10:c HARNESS_TIMER=1
 
 script:
-  - dzil test
+  - dzil test --all
