@@ -1,18 +1,19 @@
-=pod
+[![Build Status](https://travis-ci.org/nigelm/html-scrubber.svg?branch=master)](https://travis-ci.org/nigelm/html-scrubber)
+[![Kwalitee status](http://cpants.cpanauthors.org/dist/HTML-Scrubber.png)](http://cpants.charsbar.org/dist/overview/HTML-Scrubber)
+[![GitHub issues](https://img.shields.io/github/issues/nigelm/html-scrubber.svg)](https://github.com/nigelm/html-scrubber/issues)
+[![GitHub tag](https://img.shields.io/github/tag/nigelm/html-scrubber.svg)]()
+[![Cpan license](https://img.shields.io/cpan/l/HTML-Scrubber.svg)](https://metacpan.org/release/HTML-Scrubber)
+[![Cpan version](https://img.shields.io/cpan/v/HTML-Scrubber.svg)](https://metacpan.org/release/HTML-Scrubber)
 
-=encoding UTF-8
-
-=head1 NAME
+# NAME
 
 HTML::Scrubber - Perl extension for scrubbing/sanitizing HTML
 
-=head1 VERSION
+# VERSION
 
 version 0.16
 
-=for stopwords html cpan callback homepage Perlbrew perltidy repository
-
-=head1 SYNOPSIS
+# SYNOPSIS
 
     use HTML::Scrubber;
 
@@ -37,68 +38,77 @@ version 0.16
 
     print $scrubber->scrub($html);
 
-=head1 DESCRIPTION
+# DESCRIPTION
 
 If you want to "scrub" or "sanitize" html input in a reliable and flexible
 fashion, then this module is for you.
 
-I wasn't satisfied with L<HTML::Sanitizer> because it is based on
-L<HTML::TreeBuilder>, so I thought I'd write something similar that works
-directly with L<HTML::Parser>.
+I wasn't satisfied with [HTML::Sanitizer](https://metacpan.org/pod/HTML::Sanitizer) because it is based on
+[HTML::TreeBuilder](https://metacpan.org/pod/HTML::TreeBuilder), so I thought I'd write something similar that works
+directly with [HTML::Parser](https://metacpan.org/pod/HTML::Parser).
 
-=head1 DESCRIPTION
+# METHODS
 
-L<Master Build Results|https://travis-ci.org/nigelm/html-scrubber>
-
-=head1 METHODS
-
-First a note on documentation: just study the L<EXAMPLE|"EXAMPLE"> below. It's
+First a note on documentation: just study the [EXAMPLE](#example) below. It's
 all the documentation you could need.
 
-Also, be sure to read all the comments as well as L<How does it work?|"How does
-it work?">.
+Also, be sure to read all the comments as well as [How does it work?](#how-does-it-work).
 
 If you're new to perl, good luck to you.
 
-=head2 comment
+## new
+
+    my $scrubber = HTML::Scrubber->new( allow => [ qw[ p b i u hr br ] ] );
+
+Build a new [HTML::Scrubber](https://metacpan.org/pod/HTML::Scrubber).  The arguments are the initial values for the
+following directives:-
+
+- default
+- allow
+- deny
+- rules
+- process
+- comment
+
+## comment
 
     warn "comments are  ", $p->comment ? 'allowed' : 'not allowed';
     $p->comment(0);  # off by default
 
-=head2 process
+## process
 
     warn "process instructions are  ", $p->process ? 'allowed' : 'not allowed';
     $p->process(0);  # off by default
 
-=head2 script
+## script
 
     warn "script tags (and everything in between) are supressed"
         if $p->script;      # off by default
     $p->script( 0 || 1 );
 
-B<**> Please note that this is implemented using L<HTML::Parser>'s
-C<ignore_elements> function, so if C<script> is set to true, all script tags
+**\*\*** Please note that this is implemented using [HTML::Parser](https://metacpan.org/pod/HTML::Parser)'s
+`ignore_elements` function, so if `script` is set to true, all script tags
 encountered will be validated like all other tags.
 
-=head2 style
+## style
 
     warn "style tags (and everything in between) are supressed"
         if $p->style;       # off by default
     $p->style( 0 || 1 );
 
-B<**> Please note that this is implemented using L<HTML::Parser>'s
-C<ignore_elements> function, so if C<style> is set to true, all style tags
+**\*\*** Please note that this is implemented using [HTML::Parser](https://metacpan.org/pod/HTML::Parser)'s
+`ignore_elements` function, so if `style` is set to true, all style tags
 encountered will be validated like all other tags.
 
-=head2 allow
+## allow
 
     $p->allow(qw[ t a g s ]);
 
-=head2 deny
+## deny
 
     $p->deny(qw[ t a g s ]);
 
-=head2 rules
+## rules
 
     $p->rules(
         img => {
@@ -117,9 +127,9 @@ Updates a set of attribute rules. Each rule can be 1/0, a regular expression or
 a callback. Values longer than 1 char are treated as regexps. The callback is
 called with the following arguments: the current object, tag name, attribute
 name, and attribute value; the callback should return an empty list to drop the
-attribute, C<undef> to keep it without a value, or a new scalar value.
+attribute, `undef` to keep it without a value, or a new scalar value.
 
-=head2 default
+## default
 
     print "default is ", $p->default();
     $p->default(1);      # allow tags by default
@@ -130,7 +140,7 @@ attribute, C<undef> to keep it without a value, or a new scalar value.
         }
     );
 
-=head2 scrub_file
+## scrub\_file
 
     $html = $scrubber->scrub_file('foo.html');   ## returns giant string
     die "Eeek $!" unless defined $html;  ## opening foo.html may have failed
@@ -139,7 +149,7 @@ attribute, C<undef> to keep it without a value, or a new scalar value.
         or die "Eeek $!"
             if fileno STDOUT;
 
-=head2 scrub
+## scrub
 
     print $scrubber->scrub($html);  ## returns giant string
     $scrubber->scrub($html, 'new.html') or die "Eeek $!";
@@ -147,33 +157,19 @@ attribute, C<undef> to keep it without a value, or a new scalar value.
         or die "Eeek $!"
             if fileno STDOUT;
 
-=for comment _out
-    $scrubber->_out(*STDOUT) if fileno STDOUT;
-    $scrubber->_out('foo.html') or die "eeek $!";
-
-=for comment _validate
-Uses $self->{_rules} to do attribute validation.
-Takes tag, rule('_' || $tag), attrref.
-
-=for comment _scrub_str
-
-I<default> handler, used by both C<_scrub> and C<_scrub_fh>. Moved all the
+_default_ handler, used by both `_scrub` and `_scrub_fh`. Moved all the
 common code (basically all of it) into a single routine for ease of
 maintenance.
 
-=for comment _scrub_fh
+_default_ handler, does the scrubbing if we're scrubbing out to a file. Now
+calls `_scrub_str` and pushes that out to a file.
 
-I<default> handler, does the scrubbing if we're scrubbing out to a file. Now
-calls C<_scrub_str> and pushes that out to a file.
+_default_ handler, does the scrubbing if we're returning a giant string. Now
+calls `_scrub_str` and appends that to the output string.
 
-=for comment _scrub
+# How does it work?
 
-I<default> handler, does the scrubbing if we're returning a giant string. Now
-calls C<_scrub_str> and appends that to the output string.
-
-=head1 How does it work?
-
-When a tag is encountered, L<HTML::Scrubber> allows/denies the tag using the
+When a tag is encountered, [HTML::Scrubber](https://metacpan.org/pod/HTML::Scrubber) allows/denies the tag using the
 explicit rule if one exists.
 
 If no explicit rule exists, Scrubber applies the default rule.
@@ -181,9 +177,7 @@ If no explicit rule exists, Scrubber applies the default rule.
 If an explicit rule exists, but it's a simple rule(1), then the default
 attribute rule is applied.
 
-=head2 EXAMPLE
-
-=for example begin
+## EXAMPLE
 
     #!/usr/bin/perl -w
     use HTML::Scrubber;
@@ -302,92 +296,158 @@ attribute rule is applied.
         $scrubber->scrub($it),
         $/;
 
-=for example end
+## FUN
 
-=head2 FUN
-
-If you have L<Test::Inline> (and you've installed L<HTML::Scrubber>), try
+If you have [Test::Inline](https://metacpan.org/pod/Test::Inline) (and you've installed [HTML::Scrubber](https://metacpan.org/pod/HTML::Scrubber)), try
 
     pod2test Scrubber.pm >scrubber.t
     perl scrubber.t
 
-=head1 SEE ALSO
+# SEE ALSO
 
-L<HTML::Parser>, L<Test::Inline>.
+[HTML::Parser](https://metacpan.org/pod/HTML::Parser), [Test::Inline](https://metacpan.org/pod/Test::Inline).
 
-The L<HTML::Sanitizer> module is no longer available on CPAN.
+The [HTML::Sanitizer](https://metacpan.org/pod/HTML::Sanitizer) module is no longer available on CPAN.
 
-=head1 VERSION REQUIREMENTS
+# VERSION REQUIREMENTS
 
 As of version 0.14 I have added a perl minimum version requirement of 5.8. This
 is basically due to failures on the smokers perl 5.6 installations - which
 appears to be down to installation mechanisms and requirements.
 
 Since I don't want to spend the time supporting a version that is so old (and
-may not work for reasons on UTF support etc), I have added a C<use 5.008;> to
+may not work for reasons on UTF support etc), I have added a `use 5.008;` to
 the main module.
 
 If this is problematic I am very willing to accept patches to fix this up,
 although I do not personally see a good reason to support a release that has
 been obsolete for 13 years.
 
-=head1 CONTRIBUTING
+# CONTRIBUTING
 
 If you want to contribute to the development of this module, the code is on
-L<GitHub|http://github.com/nigelm/html-scrubber>. You'll need a perl
-environment with L<Dist::Zilla>, and if you're just getting started, there's
+[GitHub](http://github.com/nigelm/html-scrubber). You'll need a perl
+environment with [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla), and if you're just getting started, there's
 some documentation on using Vagrant and Perlbrew
-L<here|http://mrcaron.github.io/2015/03/06/Perl-CPAN-Pull-Request.html>.
+[here](http://mrcaron.github.io/2015/03/06/Perl-CPAN-Pull-Request.html).
 
-There is now a C<.perltidyrc> and a C<.tidyallrc> file within the repository
+There is now a `.perltidyrc` and a `.tidyallrc` file within the repository
 for the standard perltidy settings used - I will apply these before new
 releases.  Please do not let formatting prevent you from sending in patches etc
-- this can be sorted out as part of the release process.  Info on C<tidyall>
+\- this can be sorted out as part of the release process.  Info on `tidyall`
 can be found at
-L<https://metacpan.org/pod/distribution/Code-TidyAll/bin/tidyall>.
+[https://metacpan.org/pod/distribution/Code-TidyAll/bin/tidyall](https://metacpan.org/pod/distribution/Code-TidyAll/bin/tidyall).
 
-=for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
+# AUTHORS
 
-=head1 SUPPORT
+- Ruslan Zakirov <Ruslan.Zakirov@gmail.com>
+- Nigel Metheringham <nigelm@cpan.org>
+- D. H. <podmaster@cpan.org>
 
-=head2 Bugs / Feature Requests
-
-Please report any bugs or feature requests through the issue tracker
-at L<http://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Scrubber>.
-You will be notified automatically of any progress on your issue.
-
-=head2 Source Code
-
-This is open source software.  The code repository is available for
-public review and contribution under the terms of the license.
-
-L<https://github.com/nigelm/html-scrubber>
-
-  git clone https://github.com/nigelm/html-scrubber.git
-
-=head1 AUTHORS
-
-=over 4
-
-=item *
-
-Ruslan Zakirov <Ruslan.Zakirov@gmail.com>
-
-=item *
-
-Nigel Metheringham <nigelm@cpan.org>
-
-=item *
-
-D. H. <podmaster@cpan.org>
-
-=back
-
-=head1 COPYRIGHT AND LICENSE
+# COPYRIGHT AND LICENSE
 
 This software is copyright (c) 2017 by Ruslan Zakirov, Nigel Metheringham, 2003-2004 D. H.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
-=cut
+# SUPPORT
+
+## Perldoc
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc HTML::Scrubber
+
+## Websites
+
+The following websites have more information about this module, and may be of help to you. As always,
+in addition to those websites please use your favorite search engine to discover more resources.
+
+- MetaCPAN
+
+    A modern, open-source CPAN search engine, useful to view POD in HTML format.
+
+    [http://metacpan.org/release/HTML-Scrubber](http://metacpan.org/release/HTML-Scrubber)
+
+- Search CPAN
+
+    The default CPAN search engine, useful to view POD in HTML format.
+
+    [http://search.cpan.org/dist/HTML-Scrubber](http://search.cpan.org/dist/HTML-Scrubber)
+
+- RT: CPAN's Bug Tracker
+
+    The RT ( Request Tracker ) website is the default bug/issue tracking system for CPAN.
+
+    [https://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Scrubber](https://rt.cpan.org/Public/Dist/Display.html?Name=HTML-Scrubber)
+
+- AnnoCPAN
+
+    The AnnoCPAN is a website that allows community annotations of Perl module documentation.
+
+    [http://annocpan.org/dist/HTML-Scrubber](http://annocpan.org/dist/HTML-Scrubber)
+
+- CPAN Ratings
+
+    The CPAN Ratings is a website that allows community ratings and reviews of Perl modules.
+
+    [http://cpanratings.perl.org/d/HTML-Scrubber](http://cpanratings.perl.org/d/HTML-Scrubber)
+
+- CPAN Forum
+
+    The CPAN Forum is a web forum for discussing Perl modules.
+
+    [http://cpanforum.com/dist/HTML-Scrubber](http://cpanforum.com/dist/HTML-Scrubber)
+
+- CPANTS
+
+    The CPANTS is a website that analyzes the Kwalitee ( code metrics ) of a distribution.
+
+    [http://cpants.cpanauthors.org/dist/HTML-Scrubber](http://cpants.cpanauthors.org/dist/HTML-Scrubber)
+
+- CPAN Testers
+
+    The CPAN Testers is a network of smokers who run automated tests on uploaded CPAN distributions.
+
+    [http://www.cpantesters.org/distro/H/HTML-Scrubber](http://www.cpantesters.org/distro/H/HTML-Scrubber)
+
+- CPAN Testers Matrix
+
+    The CPAN Testers Matrix is a website that provides a visual overview of the test results for a distribution on various Perls/platforms.
+
+    [http://matrix.cpantesters.org/?dist=HTML-Scrubber](http://matrix.cpantesters.org/?dist=HTML-Scrubber)
+
+- CPAN Testers Dependencies
+
+    The CPAN Testers Dependencies is a website that shows a chart of the test results of all dependencies for a distribution.
+
+    [http://deps.cpantesters.org/?module=HTML::Scrubber](http://deps.cpantesters.org/?module=HTML::Scrubber)
+
+## Bugs / Feature Requests
+
+Please report any bugs or feature requests by email to `bug-html-scrubber at rt.cpan.org`, or through
+the web interface at [https://rt.cpan.org/Public/Bug/Report.html?Queue=HTML-Scrubber](https://rt.cpan.org/Public/Bug/Report.html?Queue=HTML-Scrubber). You will be automatically notified of any
+progress on the request by the system.
+
+## Source Code
+
+The code is open to the world, and available for you to hack on. Please feel free to browse it and play
+with it, or whatever. If you want to contribute patches, please send me a diff or prod me to pull
+from your repository :)
+
+[https://github.com/nigelm/html-scrubber](https://github.com/nigelm/html-scrubber)
+
+    git clone https://github.com/nigelm/html-scrubber.git
+
+# CONTRIBUTORS
+
+- Andrei Vereha <avereha@gmail.com>
+- Lee Johnson <lee@givengain.ch>
+- Michael Caron <michael.r.caron@gmail.com>
+- Michael Caron <mrcaron@users.noreply.github.com>
+- Nigel Metheringham <nm9762github@muesli.org.uk>
+- Paul Cochrane <paul@liekut.de>
+- Ruslan Zakirov <ruz@bestpractical.com>
+- Sergey Romanov <complefor@rambler.ru>
+- vagrant &lt;vagrant@precise64.(none)>
