@@ -15,7 +15,7 @@
         # Break before all operators:
 -wbb="% + - * / x != == >= <= =~ < > | & **= += *= &= <<= &&= -= /= |= >>= ||= .= %= ^= x="
 # Note that the PBP book has a typo on page 35 when defining the above -wbb
-# option, see http://oreilly.com/catalog/perlbp/errata/perlbp.confirmed
+# option, see http://www.oreilly.com/catalog/errata.csp?isbn=9780596001735
 # The above string is correct.
 
 #----------  Perltidy default options (i.e. in line with PBP)  --------------
