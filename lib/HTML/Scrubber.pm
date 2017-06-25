@@ -65,6 +65,7 @@ use warnings;
 use HTML::Parser 3.47 ();
 use HTML::Entities;
 use Scalar::Util ('weaken');
+use List::Util qw(any);
 
 our ( @_scrub, @_scrub_fh );
 
@@ -434,6 +435,12 @@ sub _scrub_str {
         }
     }
     elsif ( $e eq 'end' ) {
+
+        # empty tags list taken from
+        # https://developer.mozilla.org/en/docs/Glossary/empty_element
+        my @empty_tags = qw(area base br col embed hr img input link meta param source track wbr);
+        return "" if $text ne '' && any { $t eq $_ } @empty_tags;    # skip false closing empty tags
+
         my $place = 0;
         if ( exists $s->{_rules}->{$t} ) {
             $place = 1 if $s->{_rules}->{$t};
