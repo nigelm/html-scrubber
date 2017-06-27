@@ -86,10 +86,10 @@
    "provides" : {
       "HTML::Scrubber" : {
          "file" : "lib/HTML/Scrubber.pm",
-         "version" : "0.16"
+         "version" : "0.17"
       }
    },
-   "release_status" : "testing",
+   "release_status" : "stable",
    "resources" : {
       "homepage" : "https://github.com/nigelm/html-scrubber",
       "repository" : {
@@ -98,7 +98,7 @@
          "web" : "https://github.com/nigelm/html-scrubber"
       }
    },
-   "version" : "0.16",
+   "version" : "0.17",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.024000"
@@ -180,7 +180,7 @@
                   "branch" : null,
                   "changelog" : "Changes",
                   "signed" : 0,
-                  "tag" : "release/0.16",
+                  "tag" : "release/0.17",
                   "tag_format" : "release/%v",
                   "tag_message" : "%v"
                },
@@ -721,7 +721,7 @@
       "zilla" : {
          "class" : "Dist::Zilla::Dist::Builder",
          "config" : {
-            "is_trial" : 1
+            "is_trial" : 0
          },
          "version" : "6.007"
       }

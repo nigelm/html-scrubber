@@ -13,7 +13,7 @@ use List::Util qw(any);
 
 our ( @_scrub, @_scrub_fh );
 
-our $VERSION = '0.16'; # TRIAL VERSION
+our $VERSION = '0.17'; # VERSION
 our $AUTHORITY = 'cpan:NIGELM'; # AUTHORITY
 
 # my my my my, these here to prevent foolishness like
@@ -381,7 +381,7 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing HTML
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =for stopwords html cpan callback homepage Perlbrew perltidy repository
 

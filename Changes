@@ -1,5 +1,7 @@
 Revision history for Perl extension HTML::Scrubber.
 
+0.17      2017-06-27 14:03:47+01:00 Europe/London
+
 0.16      2017-06-25 20:30:15+01:00 Europe/London (TRIAL RELEASE)
     - Add missing testing prereqs  (github pr#9 paultcochrane)
     - Extend list of Perls in Travis config   (github pr#10 paultcochrane)
