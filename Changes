@@ -1,6 +1,7 @@
 Revision history for Perl extension HTML::Scrubber.
 
 {{$NEXT}}
+    - Reduced standard build dependancies (removed author deps)
 
 0.17      2017-06-27 14:03:47+01:00 Europe/London
 

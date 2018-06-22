@@ -10,6 +10,7 @@
 *.swp
 *.tmp
 .DS_Store
+.vstags
 
 # avoid utility files
 .build
@@ -35,4 +36,3 @@ pod2htm*.tmp
 
 # Carton packaging stuff
 local
-

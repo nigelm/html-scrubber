@@ -11,7 +11,7 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing HTML
 
 # VERSION
 
-version 0.17
+version 0.18
 
 # SYNOPSIS
 
@@ -368,7 +368,7 @@ in addition to those websites please use your favorite search engine to discover
 
     A modern, open-source CPAN search engine, useful to view POD in HTML format.
 
-    [http://metacpan.org/release/HTML-Scrubber](http://metacpan.org/release/HTML-Scrubber)
+    [https://metacpan.org/release/HTML-Scrubber](https://metacpan.org/release/HTML-Scrubber)
 
 - Search CPAN
 
@@ -394,12 +394,6 @@ in addition to those websites please use your favorite search engine to discover
 
     [http://cpanratings.perl.org/d/HTML-Scrubber](http://cpanratings.perl.org/d/HTML-Scrubber)
 
-- CPAN Forum
-
-    The CPAN Forum is a web forum for discussing Perl modules.
-
-    [http://cpanforum.com/dist/HTML-Scrubber](http://cpanforum.com/dist/HTML-Scrubber)
-
 - CPANTS
 
     The CPANTS is a website that analyzes the Kwalitee ( code metrics ) of a distribution.
@@ -408,7 +402,7 @@ in addition to those websites please use your favorite search engine to discover
 
 - CPAN Testers
 
-    The CPAN Testers is a network of smokers who run automated tests on uploaded CPAN distributions.
+    The CPAN Testers is a network of smoke testers who run automated tests on uploaded CPAN distributions.
 
     [http://www.cpantesters.org/distro/H/HTML-Scrubber](http://www.cpantesters.org/distro/H/HTML-Scrubber)
 
