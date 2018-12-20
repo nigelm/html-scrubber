@@ -39,7 +39,7 @@ package HTML::Scrubber;
 If you want to "scrub" or "sanitize" html input in a reliable and flexible
 fashion, then this module is for you.
 
-I wasn't satisfied with L<HTML::Sanitizer> because it is based on
+I wasn't satisfied with C<HTML::Sanitizer> because it is based on
 L<HTML::TreeBuilder>, so I thought I'd write something similar that works
 directly with L<HTML::Parser>.
 
@@ -718,7 +718,7 @@ If you have L<Test::Inline> (and you've installed L<HTML::Scrubber>), try
 
 L<HTML::Parser>, L<Test::Inline>.
 
-The L<HTML::Sanitizer> module is no longer available on CPAN.
+The C<HTML::Sanitizer> module is no longer available on CPAN.
 
 =head1 VERSION REQUIREMENTS
 
