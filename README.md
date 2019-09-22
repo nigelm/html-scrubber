@@ -346,7 +346,7 @@ can be found at
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2017 by Ruslan Zakirov, Nigel Metheringham, 2003-2004 D. H.
+This software is copyright (c) 2018 by Ruslan Zakirov, Nigel Metheringham, 2003-2004 D. H.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
