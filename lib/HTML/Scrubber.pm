@@ -61,7 +61,7 @@ use warnings;
 use HTML::Parser 3.47 ();
 use HTML::Entities;
 use Scalar::Util ('weaken');
-use List::Util qw(any);
+use List::Util 1.33 qw(any);
 
 our ( @_scrub, @_scrub_fh );
 
