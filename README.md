@@ -11,7 +11,7 @@ HTML::Scrubber - Perl extension for scrubbing/sanitizing HTML
 
 # VERSION
 
-version 0.18
+version 0.19
 
 # SYNOPSIS
 
